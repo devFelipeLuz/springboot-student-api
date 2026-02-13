@@ -1,11 +1,15 @@
 package com.example.backend.controller;
 
+import com.example.backend.DTO.StudentRequestDTO;
+import com.example.backend.DTO.StudentResponseDTO;
 import com.example.backend.entity.Student;
 import com.example.backend.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/students")
@@ -18,28 +22,28 @@ public class StudentController {
     }
 
     @PostMapping
-    public Student register(@RequestBody Student student) {
-        return service.create(student);
+    public StudentResponseDTO register(@Valid @RequestBody StudentRequestDTO dto) {
+        return service.create(dto);
     }
 
     @GetMapping("/{id}")
-    public Student findById(@PathVariable Long id) {
+    public Student findById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
     @GetMapping
-    public List<Student> findAll() {
+    public List<StudentResponseDTO> findAll() {
         return service.findAll();
     }
 
     @PutMapping("/{id}")
-    public Student update(@PathVariable Long id,
-                          @RequestBody Student student) {
-        return service.update(id, student);
+    public StudentResponseDTO update(@PathVariable UUID id,
+                          @Valid @RequestBody StudentRequestDTO dto) {
+        return service.update(id, dto);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
