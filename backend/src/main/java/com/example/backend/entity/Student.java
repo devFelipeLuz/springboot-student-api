@@ -1,8 +1,8 @@
 package com.example.backend.entity;
 
+import com.example.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.UUID;
 
@@ -11,29 +11,46 @@ import java.util.UUID;
 public class Student {
 
     @Getter
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Getter
-    @Setter
     @Column(name = "STUDENT_NAME")
     private String name;
 
     @Getter
-    @Setter
     @Column(name = "STUDENT_EMAIL")
     private String email;
 
     @Getter
-    @Setter
     @Column(name = "STUDENT_AGE")
     private Integer age;
 
     @Getter
-    @Setter
     @Column(name = "STUDENT_GRADE")
     private String grade;
 
+    @Getter
+    @Column(name = "ACTIVE")
+    private Boolean active;
+
+    public void updateData(String name, String email, Integer age, String grade) {
+        if (!this.active) {
+            throw new BusinessException("Aluno inativo");
+        }
+
+        if (age < 1) {
+            throw new IllegalArgumentException("Idade inválida");
+        }
+
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.grade = grade;
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
 }
