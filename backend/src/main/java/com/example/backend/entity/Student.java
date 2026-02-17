@@ -4,6 +4,8 @@ import com.example.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,14 +30,14 @@ public class Student {
     private Integer age;
 
     @Getter
-    @Column(name = "STUDENT_GRADE")
-    private String grade;
+    @OneToMany(mappedBy = "student")
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     @Getter
     @Column(name = "ACTIVE")
     private Boolean active;
 
-    public void updateData(String name, String email, Integer age, String grade) {
+    public void updateData(String name, String email, Integer age) {
         if (!this.active) {
             throw new BusinessException("Aluno inativo");
         }
@@ -47,10 +49,24 @@ public class Student {
         this.name = name;
         this.email = email;
         this.age = age;
-        this.grade = grade;
     }
 
     public void deactivate() {
         this.active = false;
+    }
+
+    public boolean hasActiveEnrollment() {
+        return enrollments.stream()
+                .anyMatch(e -> e.getStatus() == Enrollment.EnrollmentStatus.ACTIVE);
+    }
+
+    public void validateCanEnroll() {
+        if (!this.active) {
+            throw new BusinessException("Aluno inativo");
+        }
+
+        if (hasActiveEnrollment()) {
+            throw new BusinessException("Aluno já possui matrícula ativa");
+        }
     }
 }

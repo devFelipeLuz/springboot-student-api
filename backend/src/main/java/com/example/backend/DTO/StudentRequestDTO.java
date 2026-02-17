@@ -1,5 +1,6 @@
 package com.example.backend.DTO;
 
+import com.example.backend.entity.Grade;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -29,6 +30,5 @@ public class StudentRequestDTO {
     @Getter
     @Setter
     @NotBlank(message = "Grade is required")
-    private String grade;
-
+    private Grade grade;
 }

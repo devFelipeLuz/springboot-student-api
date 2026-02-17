@@ -1,5 +1,6 @@
 package com.example.backend.DTO;
 
+import com.example.backend.entity.Grade;
 import lombok.Getter;
 
 import java.util.UUID;

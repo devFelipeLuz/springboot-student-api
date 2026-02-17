@@ -27,8 +27,7 @@ public class StudentService {
         student.updateData(
                 dto.getName(),
                 dto.getEmail(),
-                dto.getAge(),
-                dto.getGrade()
+                dto.getAge()
         );
 
         repository.save(student);
@@ -66,8 +65,8 @@ public class StudentService {
         student.updateData(
                 dto.getName(),
                 dto.getEmail(),
-                dto.getAge(),
-                dto.getGrade());
+                dto.getAge()
+                );
 
         repository.save(student);
 
@@ -89,7 +88,7 @@ public class StudentService {
                 student.getName(),
                 student.getEmail(),
                 student.getAge(),
-                student.getGrade()
+                student.getGrade().getName()
         );
     }
 }
