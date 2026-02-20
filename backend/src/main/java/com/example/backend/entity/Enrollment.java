@@ -28,9 +28,6 @@ public class Enrollment {
         this.grade = grade;
         this.status = EnrollmentStatus.ACTIVE;
         this.enrollmentDate = LocalDate.now();
-
-        student.getEnrollments().add(this);
-        grade.getEnrollments().add(this);
     }
 
     @Getter

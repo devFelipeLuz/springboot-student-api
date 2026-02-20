@@ -3,7 +3,6 @@ package com.example.backend.service;
 import com.example.backend.entity.Enrollment;
 import com.example.backend.entity.Grade;
 import com.example.backend.entity.Student;
-import com.example.backend.exception.BusinessException;
 
 public class EnrollmentService {
 
@@ -11,6 +10,16 @@ public class EnrollmentService {
         grade.validateCapacity();
         student.validateCanEnroll();
 
-        return new Enrollment(student, grade);
+        Enrollment enrollment = new Enrollment(student, grade);
+
+        grade.increaseActiveEnrollmentsCount();
+        student.addEnrollment(enrollment);
+        grade.addEnrollment(enrollment);
+
+        return enrollment;
+    }
+
+    public void cancel(Enrollment enrollment) {
+        enrollment.getGrade().cancelEnrollment(enrollment);
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -68,5 +69,15 @@ public class Student {
         if (hasActiveEnrollment()) {
             throw new BusinessException("Aluno já possui matrícula ativa");
         }
+    }
+
+    public void addEnrollment(Enrollment enrollment) {
+        this.enrollments.add(enrollment);
+    }
+
+    public Optional<Enrollment> getActiveEnrollments() {
+        return this.enrollments.stream()
+                .filter(e -> e.getStatus() == Enrollment.EnrollmentStatus.ACTIVE)
+                .findFirst();
     }
 }

@@ -2,11 +2,11 @@ package com.example.backend.service;
 
 import com.example.backend.DTO.StudentRequestDTO;
 import com.example.backend.DTO.StudentResponseDTO;
+import com.example.backend.entity.Enrollment;
 import com.example.backend.entity.Student;
 import com.example.backend.exception.BusinessException;
-import com.example.backend.exception.StudentNotFoundException;
+import com.example.backend.exception.EntityNotFoundException;
 import com.example.backend.repository.StudentRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,9 +45,7 @@ public class StudentService {
 
     public Student findById(UUID id) {
         Student student = repository.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException(
-                        HttpStatus.NOT_FOUND, "Aluno não encontrado"
-                ));
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
         if (!student.getActive()) {
             throw new BusinessException("Aluno inativo");
@@ -58,9 +56,7 @@ public class StudentService {
 
     public StudentResponseDTO update(UUID id, StudentRequestDTO dto) {
         Student student = repository.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException(
-                        HttpStatus.NOT_FOUND, "Aluno não encontrado"
-                ));
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
         student.updateData(
                 dto.getName(),
@@ -75,20 +71,23 @@ public class StudentService {
 
     public void delete(UUID id) {
         Student student = repository.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException(
-                        HttpStatus.NOT_FOUND, "Aluno não encontrado"
-                ));
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
 
         student.deactivate();
     }
 
     private StudentResponseDTO toResponseDTO (Student student) {
+
+        String gradeName = student.getActiveEnrollments()
+                .map(e -> e.getGrade().getName())
+                .orElse(null);
+
         return new StudentResponseDTO(
                 student.getId(),
                 student.getName(),
                 student.getEmail(),
                 student.getAge(),
-                student.getGrade().getName()
+                gradeName
         );
     }
 }

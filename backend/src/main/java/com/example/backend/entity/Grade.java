@@ -29,15 +29,37 @@ public class Grade {
     @Column(name = "GRADE_CAPACITY")
     private Integer maxCapacity = 25;
 
-    public Long activeEnrollmentsCount() {
-        return enrollments.stream()
-                .filter(e -> e.getStatus() == Enrollment.EnrollmentStatus.ACTIVE)
-                .count();
-    }
+    @Getter
+    private Integer activeEnrollmentsCount;
 
     public void validateCapacity() {
-        if (activeEnrollmentsCount() >= maxCapacity) {
+        if (activeEnrollmentsCount >= maxCapacity) {
             throw new BusinessException("Turma lotada");
         }
+    }
+
+    public void addEnrollment(Enrollment enrollment) {
+        this.enrollments.add(enrollment);
+    }
+
+    public void increaseActiveEnrollmentsCount() {
+        if (activeEnrollmentsCount >= maxCapacity) {
+            throw new BusinessException("Turma lotada");
+        }
+
+        this.activeEnrollmentsCount++;
+    }
+
+    public void decreaseActiveEnrollmentsCount() {
+        if (activeEnrollmentsCount == 0) {
+            throw new IllegalArgumentException("Turma vazia");
+        }
+
+        this.activeEnrollmentsCount--;
+    }
+
+    public void cancelEnrollment(Enrollment enrollment) {
+        enrollment.cancel();
+        this.decreaseActiveEnrollmentsCount();
     }
 }
