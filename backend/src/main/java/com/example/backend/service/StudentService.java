@@ -2,7 +2,6 @@ package com.example.backend.service;
 
 import com.example.backend.DTO.StudentRequestDTO;
 import com.example.backend.DTO.StudentResponseDTO;
-import com.example.backend.entity.Enrollment;
 import com.example.backend.entity.Student;
 import com.example.backend.exception.BusinessException;
 import com.example.backend.exception.EntityNotFoundException;
@@ -38,25 +37,23 @@ public class StudentService {
     public List<StudentResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
-                .filter(s -> s.getActive().equals(true))
                 .map(this::toResponseDTO)
                 .toList();
     }
 
-    public Student findById(UUID id) {
-        Student student = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+    public List<StudentResponseDTO> findAllByActive() {
+        return repository.findAllByActiveTrue().stream()
+                .map(this::toResponseDTO)
+                .toList();
+    }
 
-        if (!student.getActive()) {
-            throw new BusinessException("Aluno inativo");
-        }
-
-        return student;
+    public StudentResponseDTO findById(UUID id) {
+        Student student = findActiveStudentById(id);
+        return toResponseDTO(student);
     }
 
     public StudentResponseDTO update(UUID id, StudentRequestDTO dto) {
-        Student student = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+        Student student = findActiveStudentById(id);
 
         student.updateData(
                 dto.getName(),
@@ -65,19 +62,15 @@ public class StudentService {
                 );
 
         repository.save(student);
-
         return toResponseDTO(student);
     }
 
     public void delete(UUID id) {
-        Student student = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
-
+        Student student = findActiveStudentById(id);
         student.deactivate();
     }
 
     private StudentResponseDTO toResponseDTO (Student student) {
-
         String gradeName = student.getActiveEnrollments()
                 .map(e -> e.getGrade().getName())
                 .orElse(null);
@@ -89,5 +82,16 @@ public class StudentService {
                 student.getAge(),
                 gradeName
         );
+    }
+
+    public Student findActiveStudentById(UUID id) {
+        Student student = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
+
+        if (!student.getActive()) {
+            throw new BusinessException("Aluno inativo");
+        }
+
+        return student;
     }
 }

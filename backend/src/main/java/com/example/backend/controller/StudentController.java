@@ -27,7 +27,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public Student findById(@PathVariable UUID id) {
+    public StudentResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
