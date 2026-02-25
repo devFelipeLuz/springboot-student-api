@@ -4,6 +4,7 @@ import br.com.backend.exception.BusinessException;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,33 +14,27 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
 public class User implements UserDetails {
 
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Getter
     private String username;
 
-    @Getter
     private String password;
 
-    @Getter
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Getter
     private Boolean enabled;
 
     @JsonIgnore
-    @Getter
     private LocalDate createdAt;
-
-    protected User() {}
 
     public User(String username, String password, Role role) {
         this.username = username;
@@ -72,15 +67,6 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return Boolean.TRUE.equals(this.enabled);
-    }
-
-    public enum Role {
-        USER,
-        ADMIN;
-
-        public String getAuthority() {
-            return "ROLE_" + this.name();
-        }
     }
 
     public static User createUser(

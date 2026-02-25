@@ -3,42 +3,37 @@ package br.com.backend.domain;
 import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "student")
 public class Student {
 
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Getter
     @Column(name = "STUDENT_NAME")
     private String name;
 
-    @Getter
     @Column(name = "STUDENT_EMAIL")
     private String email;
 
-    @Getter
     @Column(name = "STUDENT_AGE")
     private Integer age;
 
-    @Getter
     @OneToMany(mappedBy = "student")
     private List<Enrollment> enrollments;
 
-    @Getter
     @Column(name = "ACTIVE")
     private Boolean active;
-
-    protected Student() {}
 
     public Student(String name, String email, Integer age) {
         this.name = name;
@@ -68,7 +63,7 @@ public class Student {
 
     public boolean hasActiveEnrollment() {
         return enrollments.stream()
-                .anyMatch(e -> e.getStatus() == Enrollment.EnrollmentStatus.ACTIVE);
+                .anyMatch(e -> e.getStatus() == EnrollmentStatus.ACTIVE);
     }
 
     public void validateCanEnroll() {
@@ -87,7 +82,7 @@ public class Student {
 
     public Optional<Enrollment> getActiveEnrollments() {
         return this.enrollments.stream()
-                .filter(e -> e.getStatus() == Enrollment.EnrollmentStatus.ACTIVE)
+                .filter(e -> e.getStatus() == EnrollmentStatus.ACTIVE)
                 .findFirst();
     }
 }

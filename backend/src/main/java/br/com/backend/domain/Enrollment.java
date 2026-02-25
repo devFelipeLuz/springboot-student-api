@@ -3,15 +3,16 @@ package br.com.backend.domain;
 import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Getter
+@NoArgsConstructor
 @Entity
 @Table(name = "enrollment")
 public class Enrollment {
-
-    public Enrollment() {}
 
     public Enrollment(Student student, Grade grade) {
         if (student == null) {
@@ -28,31 +29,21 @@ public class Enrollment {
         this.enrollmentDate = LocalDate.now();
     }
 
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Getter
     @ManyToOne
     private Grade grade;
 
-    @Getter
     @ManyToOne
     private Student student;
 
-    @Getter
     @Column(name = "ENROLLMENT_DATE")
     private LocalDate enrollmentDate;
 
-    @Getter
     @Enumerated(EnumType.STRING)
     private EnrollmentStatus status;
-
-    public enum EnrollmentStatus {
-        ACTIVE,
-        CANCELED,
-    }
 
     public void cancel() {
         if (this.status != EnrollmentStatus.ACTIVE) {

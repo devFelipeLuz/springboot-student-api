@@ -7,15 +7,13 @@ import lombok.Getter;
 
 import java.util.UUID;
 
+@Getter
 public class EnrollmentResponseDTO {
 
-    @Getter
     private UUID id;
 
-    @Getter
     private Grade grade;
 
-    @Getter
     private Student student;
 
     public EnrollmentResponseDTO(UUID id, Grade grade, Student student) {

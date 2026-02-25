@@ -4,7 +4,7 @@ import br.com.backend.DTO.AdminUserCreateRequestDTO;
 import br.com.backend.DTO.PublicUserCreateRequestDTO;
 import br.com.backend.DTO.UserResponseDTO;
 import br.com.backend.domain.User;
-import br.com.backend.domain.User.Role;
+import br.com.backend.domain.Role;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.UserRepository;

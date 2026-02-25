@@ -4,12 +4,11 @@ import lombok.Getter;
 
 import java.util.UUID;
 
+@Getter
 public class GradeResponseDTO {
 
-    @Getter
     private UUID id;
 
-    @Getter
     private String name;
 
     public GradeResponseDTO(UUID id, String name) {

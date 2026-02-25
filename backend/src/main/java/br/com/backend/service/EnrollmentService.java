@@ -3,7 +3,7 @@ package br.com.backend.service;
 import br.com.backend.DTO.EnrollmentRequestDTO;
 import br.com.backend.DTO.EnrollmentResponseDTO;
 import br.com.backend.domain.Enrollment;
-import br.com.backend.domain.Enrollment.EnrollmentStatus;
+import br.com.backend.domain.EnrollmentStatus;
 import br.com.backend.domain.Grade;
 import br.com.backend.domain.Student;
 import br.com.backend.exception.BusinessException;
