@@ -26,9 +26,6 @@ public class Student {
     @Column(name = "STUDENT_EMAIL")
     private String email;
 
-    @Column(name = "STUDENT_AGE")
-    private Integer age;
-
     @OneToMany(mappedBy = "student")
     private List<Enrollment> enrollments;
 
@@ -38,7 +35,6 @@ public class Student {
     public Student(String name, String email, Integer age) {
         this.name = name;
         this.email = email;
-        this.age = age;
         this.enrollments = new ArrayList<>();
         this.active = true;
     }
@@ -54,7 +50,6 @@ public class Student {
 
         this.name = name;
         this.email = email;
-        this.age = age;
     }
 
     public void deactivate() {

@@ -9,29 +9,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
-    private UserService service;
+    private UserService adminService;
 
-    public UserController(UserService service) {
-        this.service = service;
+    public UserController(UserService AdminService) {
+        this.adminService = adminService;
     }
 
     @PostMapping
     public UserResponseDTO register(@Valid @RequestBody PublicUserCreateRequestDTO dto) {
-        return service.createPublicUser(dto);
+        return adminService.createPublicUser(dto);
     }
 
-    @PutMapping("{id}")
-    public UserResponseDTO updatePublicUserUsername(@PathVariable UUID id,
+    @PutMapping("/{id}")
+    public UserResponseDTO updateStudentUserUsername(@PathVariable UUID id,
                                                     @Valid @RequestBody PublicUserCreateRequestDTO dto) {
-        return service.updatePublicUserUsername(id, dto);
+        return adminService.updatePublicUserUsername(id, dto);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public UserResponseDTO updatePublicUserPassword(@PathVariable UUID id,
                                                     @Valid @RequestBody PublicUserCreateRequestDTO dto) {
-        return service.updatePublicUserPassword(id, dto);
+        return adminService.updatePublicUserPassword(id, dto);
     }
 }

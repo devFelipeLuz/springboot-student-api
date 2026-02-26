@@ -11,6 +11,7 @@ import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.EnorllmentRepository;
 import br.com.backend.repository.GradeRepository;
 import br.com.backend.repository.StudentRepository;
+import br.com.backend.util.FunctionsUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,38 +55,33 @@ public class EnrollmentService {
 
         repository.save(enrollment);
 
-        return enrollmentToResponseDTO(enrollment);
+        return FunctionsUtils.enrollmentToResponseDTO(enrollment);
     }
 
     public List<EnrollmentResponseDTO> findAll() {
         return repository.findAll().stream()
-                .map(this::enrollmentToResponseDTO)
+                .map(FunctionsUtils::enrollmentToResponseDTO)
                 .toList();
     }
 
     public List<EnrollmentResponseDTO> findAllByStatusActive() {
         return repository.findAllByStatusActive().stream()
-                .map(this::enrollmentToResponseDTO)
+                .map(FunctionsUtils::enrollmentToResponseDTO)
                 .toList();
     }
 
     public EnrollmentResponseDTO findById(UUID id) {
         Enrollment enrollment = findActiveEnrollment(id);
-
-        return enrollmentToResponseDTO(enrollment);
+        return FunctionsUtils.enrollmentToResponseDTO(enrollment);
     }
 
     public void cancel(UUID id) {
         Enrollment enrollment = findActiveEnrollment(id);
+        enrollment.getGrade().cancelEnrollment(enrollment);
+        repository.save(enrollment);
     }
 
-    public EnrollmentResponseDTO enrollmentToResponseDTO(Enrollment enrollment) {
-        return new EnrollmentResponseDTO(
-                enrollment.getId(),
-                enrollment.getGrade(),
-                enrollment.getStudent()
-        );
-    }
+
 
     public Enrollment findActiveEnrollment(UUID id) {
         Enrollment enrollment = repository.findById(id)

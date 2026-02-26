@@ -6,6 +6,7 @@ import br.com.backend.domain.Student;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.StudentRepository;
+import br.com.backend.util.FunctionsUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,25 +30,25 @@ public class StudentService {
 
         repository.save(student);
 
-        return toResponseDTO(student);
+        return FunctionsUtils.toStudentResponseDTO(student);
     }
 
     public List<StudentResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toResponseDTO)
+                .map(FunctionsUtils::toStudentResponseDTO)
                 .toList();
     }
 
     public List<StudentResponseDTO> findAllByActive() {
         return repository.findAllByActiveTrue().stream()
-                .map(this::toResponseDTO)
+                .map(FunctionsUtils::toStudentResponseDTO)
                 .toList();
     }
 
     public StudentResponseDTO findById(UUID id) {
         Student student = findActiveStudentById(id);
-        return toResponseDTO(student);
+        return FunctionsUtils.toStudentResponseDTO(student);
     }
 
     public StudentResponseDTO update(UUID id, StudentRequestDTO dto) {
@@ -60,26 +61,12 @@ public class StudentService {
                 );
 
         repository.save(student);
-        return toResponseDTO(student);
+        return FunctionsUtils.toStudentResponseDTO(student);
     }
 
     public void delete(UUID id) {
         Student student = findActiveStudentById(id);
         student.deactivate();
-    }
-
-    private StudentResponseDTO toResponseDTO (Student student) {
-        String gradeName = student.getActiveEnrollments()
-                .map(e -> e.getGrade().getName())
-                .orElse(null);
-
-        return new StudentResponseDTO(
-                student.getId(),
-                student.getName(),
-                student.getEmail(),
-                student.getAge(),
-                gradeName
-        );
     }
 
     public Student findActiveStudentById(UUID id) {

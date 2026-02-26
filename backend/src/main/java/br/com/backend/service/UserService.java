@@ -3,11 +3,12 @@ package br.com.backend.service;
 import br.com.backend.DTO.AdminUserCreateRequestDTO;
 import br.com.backend.DTO.PublicUserCreateRequestDTO;
 import br.com.backend.DTO.UserResponseDTO;
-import br.com.backend.domain.User;
 import br.com.backend.domain.Role;
+import br.com.backend.domain.User;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.UserRepository;
+import br.com.backend.util.FunctionsUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,83 +31,74 @@ public class UserService {
     public UserResponseDTO createAdminUser(AdminUserCreateRequestDTO dto) {
         String encodedPassword = encoder.encode(dto.getPassword());
 
-        User adminUser = User.createUser(
+        User adminUser = User.createAdminUser(
                 dto.getUsername(),
                 encodedPassword,
-                dto.getRole());
+                Role.ADMIN);
 
         repository.save(adminUser);
 
-        return toUserResponseDTO(adminUser);
+        return FunctionsUtils.toUserResponseDTO(adminUser);
     }
 
     public UserResponseDTO createPublicUser(PublicUserCreateRequestDTO dto) {
         String encodedPassword = encoder.encode(dto.getPassword());
 
-        User user = User.createUser(
+        User user = User.createGlobalUser(
                 dto.getUsername(),
-                encodedPassword,
-                Role.USER);
+                encodedPassword);
 
         repository.save(user);
 
-        return toUserResponseDTO(user);
+        return FunctionsUtils.toUserResponseDTO(user);
     }
 
     public List<UserResponseDTO> findAll() {
         return repository.findAll().stream()
-                .map(this::toUserResponseDTO)
+                .map(FunctionsUtils::toUserResponseDTO)
                 .toList();
     }
 
     public List<UserResponseDTO> findAllEnabled() {
         return repository.findAllByEnabledTrue().stream()
-                .map(this::toUserResponseDTO)
+                .map(FunctionsUtils::toUserResponseDTO)
                 .toList();
     }
 
     public UserResponseDTO findById(UUID id) {
         User user = findActiveUserById(id);
-        return toUserResponseDTO(user);
+        return FunctionsUtils.toUserResponseDTO(user);
     }
 
     public UserResponseDTO updateAdminUsername(UUID id, AdminUserCreateRequestDTO dto) {
         User adminUser = findActiveUserById(id);
         adminUser.updateUsername(dto.getUsername());
-        return toUserResponseDTO(adminUser);
+        return FunctionsUtils.toUserResponseDTO(adminUser);
     }
 
     public UserResponseDTO updateAdminUserPassword(UUID id, AdminUserCreateRequestDTO dto) {
         String encondedPassword = encoder.encode(dto.getPassword());
         User adminUser = findActiveUserById(id);
         adminUser.updatePassword(encondedPassword);
-        return toUserResponseDTO(adminUser);
+        return FunctionsUtils.toUserResponseDTO(adminUser);
     }
 
     public UserResponseDTO updatePublicUserUsername(UUID id, PublicUserCreateRequestDTO dto) {
         User user = findActiveUserById(id);
         user.updateUsername(dto.getUsername());
-        return toUserResponseDTO(user);
+        return FunctionsUtils.toUserResponseDTO(user);
     }
 
     public UserResponseDTO updatePublicUserPassword(UUID id, PublicUserCreateRequestDTO dto) {
         String encodedPassword = encoder.encode(dto.getPassword());
         User user = findActiveUserById(id);
         user.updatePassword(encodedPassword);
-        return toUserResponseDTO(user);
+        return FunctionsUtils.toUserResponseDTO(user);
     }
 
     public void delete(UUID id) {
         User user = findActiveUserById(id);
         user.deactivate();
-    }
-
-    public UserResponseDTO toUserResponseDTO(User user) {
-        return new UserResponseDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getRole()
-        );
     }
 
     public User findActiveUserById(UUID id) {

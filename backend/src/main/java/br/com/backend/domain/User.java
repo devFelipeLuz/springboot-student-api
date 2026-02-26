@@ -1,6 +1,7 @@
 package br.com.backend.domain;
 
 import br.com.backend.exception.BusinessException;
+import br.com.backend.security.RefreshToken;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,9 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @NoArgsConstructor
@@ -33,6 +32,8 @@ public class User implements UserDetails {
 
     private Boolean enabled;
 
+    private LocalDate deletedAt;
+
     @JsonIgnore
     private LocalDate createdAt;
 
@@ -41,6 +42,16 @@ public class User implements UserDetails {
         this.password = password;
         this.role = role;
         this.enabled = true;
+        this.deletedAt = null;
+        this.createdAt = LocalDate.now();
+    }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+        this.role = null;
+        this.enabled = true;
+        this.deletedAt = null;
         this.createdAt = LocalDate.now();
     }
 
@@ -69,7 +80,14 @@ public class User implements UserDetails {
         return Boolean.TRUE.equals(this.enabled);
     }
 
-    public static User createUser(
+    public static User createGlobalUser(
+            String username,
+            String encodedPassword) {
+
+        return new User(username, encodedPassword);
+    }
+
+    public static User createAdminUser(
             String username,
             String encodedPassword,
             Role role) {
@@ -95,5 +113,6 @@ public class User implements UserDetails {
 
     public void deactivate() {
         this.enabled = false;
+        this.deletedAt = LocalDate.now();
     }
 }

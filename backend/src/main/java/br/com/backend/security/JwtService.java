@@ -25,7 +25,7 @@ public class JwtService {
                 .subject(user.getUsername())
                 .claim("role", user.getRole().name())
                 .issuedAt(Date.from(now))
-                .expiration(Date.from(now.plus(1, ChronoUnit.HOURS)))
+                .expiration(Date.from(now.plus(15, ChronoUnit.MINUTES)))
                 .signWith(key)
                 .compact();
 

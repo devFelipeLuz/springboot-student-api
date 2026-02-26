@@ -40,19 +40,19 @@ public class AdminUserController {
         return service.findById(id);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public UserResponseDTO updateAdminUserUsername(@PathVariable UUID id,
                                                    @Valid @RequestBody AdminUserCreateRequestDTO dto) {
         return service.updateAdminUsername(id, dto);
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public UserResponseDTO updateAdminUserPassword(@PathVariable UUID id,
                                                    @Valid @RequestBody AdminUserCreateRequestDTO dto){
         return service.updateAdminUserPassword(id, dto);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

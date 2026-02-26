@@ -1,8 +1,10 @@
 package br.com.backend.domain;
 
 public enum Role {
-    USER,
-    ADMIN;
+    ADMIN,
+    STUDENT,
+    PROFESSOR,
+    CORDINATOR;
 
     public String getAuthority() {
         return "ROLE_" + this.name();
