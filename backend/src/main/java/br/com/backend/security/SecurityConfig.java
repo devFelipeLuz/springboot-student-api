@@ -23,10 +23,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/admin/user").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/admin/user").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/admin/user").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/admin/user").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/admin/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/admin/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/admin/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/admin/users").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
                 return http.build();

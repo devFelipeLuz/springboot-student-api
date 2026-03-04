@@ -4,6 +4,7 @@ import br.com.backend.exception.BusinessException;
 import br.com.backend.security.RefreshToken;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -30,7 +31,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private Boolean enabled;
+    private boolean enabled;
 
     private LocalDate deletedAt;
 
@@ -77,7 +78,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return Boolean.TRUE.equals(this.enabled);
+        return this.enabled && this.deletedAt != null;
     }
 
     public static User createGlobalUser(

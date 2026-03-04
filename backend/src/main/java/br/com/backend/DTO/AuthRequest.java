@@ -1,6 +1,6 @@
 package br.com.backend.DTO;
 
-public record LoginRequest(
+public record AuthRequest(
         String username,
         String password
 ) {}

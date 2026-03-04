@@ -21,15 +21,13 @@ public class JwtService {
 
         Instant now = Instant.now();
 
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .subject(user.getUsername())
                 .claim("role", user.getRole().name())
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(now.plus(15, ChronoUnit.MINUTES)))
                 .signWith(key)
                 .compact();
-
-        return token;
     }
 
     public String extractUsername(String token) {
@@ -45,6 +43,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         String username = extractUsername(token);
+        userDetails.isEnabled();
         return username.equals(userDetails.getUsername());
     }
 }

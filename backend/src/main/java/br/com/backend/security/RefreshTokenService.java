@@ -36,7 +36,7 @@ public class RefreshTokenService {
 
     private String hashToken(String token) {
         try {
-            MessageDigest md = MessageDigest.getInstance("SHA=256");
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = md.digest(token.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hashBytes);
 

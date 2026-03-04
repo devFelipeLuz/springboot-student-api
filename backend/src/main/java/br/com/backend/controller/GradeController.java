@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/grade")
+@RequestMapping("/grades")
 public class GradeController {
 
     private final GradeService service;

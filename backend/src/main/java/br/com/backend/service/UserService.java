@@ -5,7 +5,6 @@ import br.com.backend.DTO.PublicUserCreateRequestDTO;
 import br.com.backend.DTO.UserResponseDTO;
 import br.com.backend.domain.Role;
 import br.com.backend.domain.User;
-import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.UserRepository;
 import br.com.backend.util.FunctionsUtils;
@@ -104,10 +103,7 @@ public class UserService {
     public User findActiveUserById(UUID id) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User não encontrado"));
-
-        if (!user.getEnabled()) {
-            throw new BusinessException("Usuário desabilitado");
-        }
+        user.isEnabled();
         return user;
     }
 }

@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/admin/user")
+@RequestMapping("/admin/users")
 public class AdminUserController {
 
     private UserService service;
