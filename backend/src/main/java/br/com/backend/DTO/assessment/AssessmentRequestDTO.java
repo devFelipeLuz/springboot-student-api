@@ -1,13 +1,12 @@
 package br.com.backend.DTO.assessment;
 
-import br.com.backend.domain.StudentGrade;
-import br.com.backend.domain.TeachingAssignment;
 import br.com.backend.domain.enums.AssessmentType;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.UUID;
 
 public record AssessmentRequestDTO (
-        String title,
-        AssessmentType type,
-        TeachingAssignment teachingAssignment,
-        StudentGrade studentGrade
-    ) {
-}
+        @NotNull String title,
+        @NotNull AssessmentType type,
+        @NotNull UUID teachingAssignmentId
+    ) {}

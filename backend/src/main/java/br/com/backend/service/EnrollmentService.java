@@ -19,13 +19,13 @@ import java.util.UUID;
 @Transactional
 public class EnrollmentService {
 
-    private EnorllmentRepository repository;
+    private EnrollmentRepository repository;
     private StudentRepository studentRepo;
     private ClassroomRepository classRepository;
     private SchoolYearRepository schoolYearRepository;
 
     public EnrollmentService(
-            EnorllmentRepository repository,
+            EnrollmentRepository repository,
             StudentRepository studentRepo,
             ClassroomRepository classRepository,
             SchoolYearRepository schoolYearRepository) {

@@ -4,6 +4,7 @@ package br.com.backend.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -28,10 +29,11 @@ public class StudentGrade {
     @JoinColumn(name = "enrollment_id", nullable = false)
     private Enrollment enrollment;
 
+    @Setter
     @Column(nullable = false)
     private Double grade;
 
-    public StudentGrade(Student student, Assessment assessment, Enrollment enrollment, Double grade) {
+    public StudentGrade(Assessment assessment, Enrollment enrollment) {
         if (assessment == null) {
             throw new NullPointerException("Assessment is null");
         }
@@ -40,12 +42,8 @@ public class StudentGrade {
             throw new IllegalArgumentException("Enrollment is null");
         }
 
-        if (grade == null) {
-            throw new NullPointerException("Grade is null");
-        }
-
         this.assessment = assessment;
         this.enrollment = enrollment;
-        this.grade = grade;
+        this.grade = null;
     }
 }

@@ -31,10 +31,7 @@ public class Assessment {
     @Column(nullable = false, updatable = false)
     private Instant date;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private StudentGrade grade;
-
-    public Assessment(String title, AssessmentType type, TeachingAssignment teachingAssignment, StudentGrade grade) {
+    public Assessment(String title, AssessmentType type, TeachingAssignment teachingAssignment) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title is null or blank");
         }
@@ -47,20 +44,15 @@ public class Assessment {
             throw new IllegalArgumentException("TeachingAssignment is null or blank");
         }
 
-        if (grade == null) {
-            throw new IllegalArgumentException("Grade is null or blank");
-        }
-
         this.title = title;
         this.type = type;
         this.teachingAssignment = teachingAssignment;
         this.date = Instant.now();
-        this.grade = grade;
     }
 
-    public void updateData(String title, AssessmentType type, StudentGrade grade) {
+    public void updateData(String title, AssessmentType type, TeachingAssignment teachingAssignment) {
         this.title = title;
         this.type = type;
-        this.grade = grade;
+        this.teachingAssignment = teachingAssignment;
     }
 }

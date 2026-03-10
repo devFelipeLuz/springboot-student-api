@@ -43,4 +43,8 @@ public class Professor {
     public void deactivate() {
         this.active = false;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

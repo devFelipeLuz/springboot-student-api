@@ -1,16 +1,17 @@
-package br.com.backend.DTO.assessment;
+package br.com.backend.DTO.grade;
 
 import br.com.backend.domain.enums.AssessmentType;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public record AssessmentResponseDTO(
+public record StudentGradeResponseDTO(
         UUID id,
+        String studentName,
+        Double grade,
         String title,
-        String subject,
         AssessmentType type,
+        Instant date,
         String professorName,
-        String classroom,
-        Instant date
+        String subject
 ) {}

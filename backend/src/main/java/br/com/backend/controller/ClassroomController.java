@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/grades")
+@RequestMapping("/classrooms")
 public class ClassroomController {
 
     private final ClassroomService service;
@@ -23,13 +23,13 @@ public class ClassroomController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra uma Grade")
+    @Operation(summary = "Registra uma Classroom")
     @PostMapping
     public ClassroomResponseDTO register(@Valid @RequestBody ClassroomRequestDTO dto) {
         return service.create(dto);
     }
 
-    @Operation(summary = "Busca todas as Grades e retorna em páginas")
+    @Operation(summary = "Busca todas Classroom e retorna em páginas")
     @GetMapping
     public Page<ClassroomResponseDTO> findAll(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
@@ -37,7 +37,7 @@ public class ClassroomController {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca uma Grade por ID")
+    @Operation(summary = "Busca Classroom por ID")
     @GetMapping("/{id}")
     public ClassroomResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);

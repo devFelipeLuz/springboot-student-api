@@ -9,4 +9,8 @@ import java.util.UUID;
 
 public interface StudentGradeRepository extends JpaRepository<StudentGrade, UUID> {
     Page<StudentGrade> findAll(Pageable pageable);
+
+    boolean existsByAssessmentIdAndEnrollmentId(UUID assessmentId, UUID enrollmentId);
+
+    Page<StudentGrade> findByAssessmentId(UUID assessmentId, Pageable pageable);
 }

@@ -53,7 +53,7 @@ public class AssessmentController {
     }
 
     @Operation(summary = "Deleta assessment por ID")
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
