@@ -1,7 +1,7 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.request.EnrollmentRequestDTO;
-import br.com.backend.DTO.response.EnrollmentResponseDTO;
+import br.com.backend.dto.request.EnrollmentRequestDTO;
+import br.com.backend.dto.response.EnrollmentResponseDTO;
 import br.com.backend.entity.*;
 import br.com.backend.entity.enums.EnrollmentStatus;
 import br.com.backend.exception.BusinessException;
@@ -37,13 +37,13 @@ public class EnrollmentService {
     }
 
     public EnrollmentResponseDTO enroll(EnrollmentRequestDTO dto) {
-        Student student = studentRepo.findById(dto.getStudent().getId())
+        Student student = studentRepo.findById(dto.studentId())
                         .orElseThrow(() -> new EntityNotFoundException("Student não encontrado"));
 
-        Classroom classroom = classRepository.findById(dto.getClassroom().getId())
+        Classroom classroom = classRepository.findById(dto.classroomId())
                         .orElseThrow(() -> new EntityNotFoundException("Grade não encontrada"));
 
-        SchoolYear schoolYear = schoolYearRepository.findById(dto.getSchoolYear().getId())
+        SchoolYear schoolYear = schoolYearRepository.findById(dto.schoolYearId())
                         .orElseThrow(() -> new EntityNotFoundException("SchoolYear não encontrado"));
 
 
@@ -52,7 +52,6 @@ public class EnrollmentService {
 
         Enrollment enrollment = new Enrollment(student, classroom, schoolYear);
 
-        classroom.increaseActiveEnrollmentsCount();
         student.addEnrollment(enrollment);
         classroom.addEnrollment(enrollment);
 
@@ -79,7 +78,6 @@ public class EnrollmentService {
     public void cancel(UUID id) {
         Enrollment enrollment = findActiveEnrollment(id);
         enrollment.getClassroom().cancelEnrollment(enrollment);
-        repository.save(enrollment);
     }
 
     public Enrollment findActiveEnrollment(UUID id) {

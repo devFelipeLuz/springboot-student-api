@@ -1,6 +1,6 @@
 package br.com.backend.mapper;
 
-import br.com.backend.DTO.response.StudentResponseDTO;
+import br.com.backend.dto.response.StudentResponseDTO;
 import br.com.backend.entity.Student;
 import br.com.backend.entity.User;
 

@@ -1,21 +1,17 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
 import br.com.backend.entity.Classroom;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter @Setter
-public class StudentRequestDTO {
+public record StudentRequestDTO(
+        @NotBlank(message = "Name is required")
+        String name,
 
-    @NotBlank(message = "Name is required")
-    private String name;
+        @Email
+        @NotBlank(message = "Email is required")
+        String email,
 
-    @Email
-    @NotBlank
-    private String email;
-
-    @NotBlank(message = "Classroom is required")
-    private Classroom classroom;
-}
+        @NotBlank(message = "Classroom is required")
+        Classroom classroom
+) {}

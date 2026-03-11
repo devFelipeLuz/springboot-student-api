@@ -1,18 +1,15 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.request.ForgotPasswordRequest;
-import br.com.backend.DTO.request.ResetPasswordRequest;
-import br.com.backend.DTO.request.AuthRequest;
-import br.com.backend.DTO.response.AuthResponse;
-import br.com.backend.DTO.request.RefreshRequest;
+import br.com.backend.dto.request.ForgotPasswordRequest;
+import br.com.backend.dto.request.ResetPasswordRequest;
+import br.com.backend.dto.request.AuthRequest;
+import br.com.backend.dto.response.AuthResponse;
+import br.com.backend.dto.request.RefreshRequest;
 import br.com.backend.service.AuthService;
 import br.com.backend.service.PasswordResetService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")

@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.request.EnrollmentRequestDTO;
-import br.com.backend.DTO.response.EnrollmentResponseDTO;
+import br.com.backend.dto.request.EnrollmentRequestDTO;
+import br.com.backend.dto.response.EnrollmentResponseDTO;
 import br.com.backend.service.EnrollmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,38 +24,38 @@ public class EnrollmentController {
         this.service = service;
     }
 
-    @Operation(summary = "Cria matrícula")
+    @Operation(summary = "Registra Enrollment")
     @PostMapping
-    public EnrollmentResponseDTO create(@Valid @RequestBody EnrollmentRequestDTO dto) {
+    public EnrollmentResponseDTO register(@Valid @RequestBody EnrollmentRequestDTO dto) {
         return service.enroll(dto);
     }
 
-    @Operation(summary = "Busca todas as matriculas e retorna em páginas")
+    @Operation(summary = "Busca Enrollment e retorna em páginas")
     @GetMapping
-    public Page<EnrollmentResponseDTO> findAll(
+    public Page<EnrollmentResponseDTO> getEnrollments(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca todas as matriculas ativas e retorna em páginas")
+    @Operation(summary = "Busca Enrollments ativas e retorna em páginas")
     @GetMapping("/active")
-    public Page<EnrollmentResponseDTO> findAllByStatusActive(
+    public Page<EnrollmentResponseDTO> getActiveEnrollments(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAllByStatusActive(pageable);
     }
 
-    @Operation(summary = "Busca matrícula por ID")
+    @Operation(summary = "Busca Enrollment por ID")
     @GetMapping("/{id}")
     public EnrollmentResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
-    @Operation(summary = "Deleta matrícula encontrada por ID")
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    @Operation(summary = "Deleta Enrollment encontrada por ID")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable UUID id) {
         service.cancel(id);
-        return ResponseEntity.noContent().build();
     }
 }

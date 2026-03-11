@@ -1,4 +1,4 @@
-package br.com.backend.DTO.response;
+package br.com.backend.dto.response;
 
 public record AuthResponse (
         String accessToken,

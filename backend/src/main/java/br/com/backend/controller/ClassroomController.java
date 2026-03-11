@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.request.ClassroomRequestDTO;
-import br.com.backend.DTO.response.ClassroomResponseDTO;
+import br.com.backend.dto.request.ClassroomRequestDTO;
+import br.com.backend.dto.response.ClassroomResponseDTO;
 import br.com.backend.service.ClassroomService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -23,13 +23,13 @@ public class ClassroomController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra uma Classroom")
+    @Operation(summary = "Registra Classroom")
     @PostMapping
     public ClassroomResponseDTO register(@Valid @RequestBody ClassroomRequestDTO dto) {
-        return service.create(dto);
+        return service.register(dto);
     }
 
-    @Operation(summary = "Busca todas Classroom e retorna em páginas")
+    @Operation(summary = "Busca Classroom e retorna em páginas")
     @GetMapping
     public Page<ClassroomResponseDTO> findAll(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)

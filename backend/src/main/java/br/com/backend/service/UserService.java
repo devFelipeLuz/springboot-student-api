@@ -1,7 +1,7 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.request.UserCreateRequestDTO;
-import br.com.backend.DTO.response.UserResponseDTO;
+import br.com.backend.dto.request.UserCreateRequestDTO;
+import br.com.backend.dto.response.UserResponseDTO;
 import br.com.backend.entity.User;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.UserMapper;
@@ -26,13 +26,13 @@ public class UserService {
         this.encoder = encoder;
     }
 
-    public UserResponseDTO create(UserCreateRequestDTO dto) {
-        String encodedPassword = encoder.encode(dto.getPassword());
+    public UserResponseDTO register(UserCreateRequestDTO dto) {
+        String encodedPassword = encoder.encode(dto.password());
 
         User adminUser = User.createUser(
-                dto.getEmail(),
+                dto.email(),
                 encodedPassword,
-                dto.getRole());
+                dto.role());
 
         repository.save(adminUser);
 
@@ -56,12 +56,12 @@ public class UserService {
 
     public UserResponseDTO updateEmail(UUID id, UserCreateRequestDTO dto) {
         User adminUser = findActiveUserById(id);
-        adminUser.updateEmail(dto.getEmail());
+        adminUser.updateEmail(dto.email());
         return UserMapper.toDTO(adminUser);
     }
 
     public UserResponseDTO updatePassword(UUID id, UserCreateRequestDTO dto) {
-        String encondedPassword = encoder.encode(dto.getPassword());
+        String encondedPassword = encoder.encode(dto.password());
         User adminUser = findActiveUserById(id);
         adminUser.updatePassword(encondedPassword);
         return UserMapper.toDTO(adminUser);

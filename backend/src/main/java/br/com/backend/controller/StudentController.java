@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.request.StudentRequestDTO;
-import br.com.backend.DTO.response.StudentResponseDTO;
+import br.com.backend.dto.request.StudentRequestDTO;
+import br.com.backend.dto.response.StudentResponseDTO;
 import br.com.backend.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -24,10 +24,10 @@ public class StudentController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra um Student")
+    @Operation(summary = "Registra Student")
     @PostMapping
     public StudentResponseDTO register(@Valid @RequestBody StudentRequestDTO dto) {
-        return service.create(dto);
+        return service.register(dto);
     }
 
     @Operation(summary = "Busca Student por ID")
@@ -36,7 +36,7 @@ public class StudentController {
         return service.findById(id);
     }
 
-    @Operation(summary = "Busca todos Student e retorna em páginas")
+    @Operation(summary = "Busca Students e retorna em páginas")
     @GetMapping
     public Page<StudentResponseDTO> findAll(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
@@ -44,25 +44,25 @@ public class StudentController {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca todos Student ativos e retorna em páginas")
-    @GetMapping
+    @Operation(summary = "Busca Students ativos e retorna em páginas")
+    @GetMapping("/active")
     public Page<StudentResponseDTO> findAllByActive(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAllByActive(pageable);
     }
 
-    @Operation(summary = "Atualiza um Student encontrado por ID")
+    @Operation(summary = "Atualiza Student encontrado por ID")
     @PutMapping("/{id}")
     public StudentResponseDTO update(@PathVariable UUID id,
                           @Valid @RequestBody StudentRequestDTO dto) {
         return service.update(id, dto);
     }
 
-    @Operation(summary = "Deleta um Student encotrado por ID")
+    @Operation(summary = "Deleta Student encotrado por ID")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public void delete(@PathVariable UUID id) {
         service.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

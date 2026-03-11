@@ -1,15 +1,14 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
-import br.com.backend.entity.SchoolYear;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
+import jakarta.validation.constraints.NotNull;
 
-@Getter
-public class ClassroomRequestDTO {
+import java.util.UUID;
 
-    @NotBlank(message = "Name is required")
-    private String name;
+public record ClassroomRequestDTO(
+        @NotBlank(message = "Classroom is required")
+        String name,
 
-    @NotBlank(message = "SchoolYear is required")
-    private SchoolYear schoolYear;
-}
+        @NotNull @NotBlank(message = "SchoolYearID is required")
+        UUID schoolYearId
+) {}

@@ -1,7 +1,7 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.request.ProfessorRequestDTO;
-import br.com.backend.DTO.response.ProfessorResponseDTO;
+import br.com.backend.dto.request.ProfessorRequestDTO;
+import br.com.backend.dto.response.ProfessorResponseDTO;
 import br.com.backend.entity.Professor;
 import br.com.backend.entity.User;
 import br.com.backend.exception.EntityNotFoundException;

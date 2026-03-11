@@ -1,7 +1,7 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.request.StudentRequestDTO;
-import br.com.backend.DTO.response.StudentResponseDTO;
+import br.com.backend.dto.request.StudentRequestDTO;
+import br.com.backend.dto.response.StudentResponseDTO;
 import br.com.backend.entity.Student;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
@@ -10,11 +10,13 @@ import br.com.backend.repository.StudentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
 
 @Service
+@Transactional
 public class StudentService {
 
     private final StudentRepository repository;
@@ -23,8 +25,8 @@ public class StudentService {
         this.repository = repository;
     }
 
-    public StudentResponseDTO create(StudentRequestDTO dto) {
-        Student student = new Student(dto.getName());
+    public StudentResponseDTO register(StudentRequestDTO dto) {
+        Student student = new Student(dto.name());
         repository.save(student);
         return StudentMapper.toDTO(student);
     }
@@ -46,15 +48,13 @@ public class StudentService {
 
     public StudentResponseDTO update(UUID id, StudentRequestDTO dto) {
         Student student = findActiveStudentById(id);
-        student.updateData(dto.getName());
-        repository.save(student);
+        student.updateData(dto.name());
         return StudentMapper.toDTO(student);
     }
 
     public void delete(UUID id) {
         Student student = findActiveStudentById(id);
         student.deactivate();
-        repository.save(student);
     }
 
     private Student findActiveStudentById(UUID id) {

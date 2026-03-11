@@ -1,4 +1,6 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
-public record ResetPasswordRequest(String token, String newPassword) {
-}
+public record ResetPasswordRequest(
+        String token,
+        String newPassword
+) {}

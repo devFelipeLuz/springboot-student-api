@@ -1,8 +1,8 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.request.StudentGradeRequestDTO;
-import br.com.backend.DTO.response.StudentGradeResponseDTO;
-import br.com.backend.DTO.request.GradeUpdateDTO;
+import br.com.backend.dto.request.StudentGradeRequestDTO;
+import br.com.backend.dto.response.StudentGradeResponseDTO;
+import br.com.backend.dto.request.GradeUpdateDTO;
 import br.com.backend.entity.Assessment;
 import br.com.backend.entity.Enrollment;
 import br.com.backend.entity.StudentGrade;

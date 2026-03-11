@@ -1,7 +1,7 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.request.AuthRequest;
-import br.com.backend.DTO.response.AuthResponse;
+import br.com.backend.dto.request.AuthRequest;
+import br.com.backend.dto.response.AuthResponse;
 import br.com.backend.entity.User;
 import br.com.backend.security.RefreshToken;
 import br.com.backend.security.JwtService;

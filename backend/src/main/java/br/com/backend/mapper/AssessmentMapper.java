@@ -1,6 +1,6 @@
 package br.com.backend.mapper;
 
-import br.com.backend.DTO.response.AssessmentResponseDTO;
+import br.com.backend.dto.response.AssessmentResponseDTO;
 import br.com.backend.entity.*;
 
 public final class AssessmentMapper {

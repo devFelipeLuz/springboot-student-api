@@ -1,19 +1,16 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
 import br.com.backend.entity.enums.Role;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
 
-@Getter
-@Setter
-public class UserCreateRequestDTO {
+public record UserCreateRequestDTO(
+        @NotNull @NotBlank(message = "Username is required")
+        String email,
 
-    @NotBlank(message = "Username is required")
-    private String email;
+        @NotNull @NotBlank(message = "password is required")
+        String password,
 
-    @NotBlank(message = "password is required")
-    private String password;
-
-    private Role role;
-}
+        @NotNull @NotBlank
+        Role role
+) {}

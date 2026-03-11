@@ -1,4 +1,4 @@
-package br.com.backend.DTO.response;
+package br.com.backend.dto.response;
 
 import br.com.backend.entity.enums.AssessmentType;
 

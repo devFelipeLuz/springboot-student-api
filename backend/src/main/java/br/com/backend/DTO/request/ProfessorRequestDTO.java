@@ -1,4 +1,4 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record ProfessorRequestDTO(
-        @NotNull @NotBlank String name,
-        @NotNull UUID userId
+        @NotNull @NotBlank(message = "Name is required")
+        String name,
+
+        @NotNull(message = "UserID is required")
+        UUID userId
         ) {}

@@ -1,7 +1,7 @@
 package br.com.backend.service;
 
-import br.com.backend.DTO.request.AssessmentRequestDTO;
-import br.com.backend.DTO.response.AssessmentResponseDTO;
+import br.com.backend.dto.request.AssessmentRequestDTO;
+import br.com.backend.dto.response.AssessmentResponseDTO;
 import br.com.backend.entity.Assessment;
 import br.com.backend.entity.TeachingAssignment;
 import br.com.backend.exception.EntityNotFoundException;
@@ -54,9 +54,7 @@ public class AssessmentService {
     }
 
     public AssessmentResponseDTO update(UUID id, AssessmentRequestDTO dto) {
-        Assessment assessment = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Assessment não encontrado"));
-
+        Assessment assessment = findAssessmentById(id);
         TeachingAssignment teachingAssignment = assessment.getTeachingAssignment();
 
         assessment.updateData(
@@ -65,11 +63,16 @@ public class AssessmentService {
                 teachingAssignment
         );
 
-        repository.save(assessment);
         return AssessmentMapper.toDTO(assessment);
     }
 
     public void delete(UUID id) {
-        repository.deleteById(id);
+        Assessment assessment = findAssessmentById(id);
+        repository.delete(assessment);
+    }
+
+    private Assessment findAssessmentById(UUID assessmentId) {
+        return repository.findById(assessmentId)
+                .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
     }
 }

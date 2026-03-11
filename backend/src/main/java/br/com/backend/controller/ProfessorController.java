@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.DTO.request.ProfessorRequestDTO;
-import br.com.backend.DTO.response.ProfessorResponseDTO;
+import br.com.backend.dto.request.ProfessorRequestDTO;
+import br.com.backend.dto.response.ProfessorResponseDTO;
 import br.com.backend.service.ProfessorService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -40,13 +40,13 @@ public class ProfessorController {
 
     @Operation(summary = "Busca Professor por ID")
     @GetMapping("/{id}")
-    public ProfessorResponseDTO findProfessor(@PathVariable UUID professorId) {
+    public ProfessorResponseDTO findById(@PathVariable UUID professorId) {
         return service.findById(professorId);
     }
 
     @Operation(summary = "Atualiza Professor encontrado por ID")
     @PatchMapping("/{id}")
-    public ProfessorResponseDTO updateProfessor(@PathVariable UUID professorId,
+    public ProfessorResponseDTO update(@PathVariable UUID professorId,
                                                 @Valid @RequestBody ProfessorRequestDTO dto) {
         return service.update(professorId, dto);
     }

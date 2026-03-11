@@ -1,6 +1,6 @@
 package br.com.backend.mapper;
 
-import br.com.backend.DTO.response.UserResponseDTO;
+import br.com.backend.dto.response.UserResponseDTO;
 import br.com.backend.entity.User;
 
 public final class UserMapper {

@@ -1,4 +1,9 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
-public record ForgotPasswordRequest(String email) {
-}
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record ForgotPasswordRequest(
+        @NotNull @NotBlank(message = "Email is required")
+        String email
+) {}

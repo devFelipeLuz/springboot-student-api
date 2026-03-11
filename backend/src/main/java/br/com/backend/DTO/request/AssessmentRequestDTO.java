@@ -1,4 +1,4 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
 import br.com.backend.entity.enums.AssessmentType;
 import jakarta.validation.constraints.NotNull;

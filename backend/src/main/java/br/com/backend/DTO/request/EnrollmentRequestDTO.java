@@ -1,21 +1,17 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
-import br.com.backend.entity.Classroom;
-import br.com.backend.entity.SchoolYear;
-import br.com.backend.entity.Student;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
 
-@Getter @Setter
-public class EnrollmentRequestDTO {
+import java.util.UUID;
 
-    @NotBlank(message = "Student is required")
-    private Student student;
+public record EnrollmentRequestDTO(
+        @NotNull @NotBlank(message = "StudentID is required")
+        UUID studentId,
 
-    @NotBlank(message = "Grade is required")
-    private Classroom classroom;
+        @NotNull @NotBlank(message = "ClassroomID is required")
+        UUID classroomId,
 
-    @NotBlank(message = "SchoolYear is required")
-    private SchoolYear schoolYear;
-}
+        @NotNull @NotBlank(message = "SchoolYearID is required")
+        UUID schoolYearId
+) {}

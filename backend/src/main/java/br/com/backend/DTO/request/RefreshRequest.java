@@ -1,4 +1,5 @@
-package br.com.backend.DTO.request;
+package br.com.backend.dto.request;
 
-public record RefreshRequest (String refreshToken){
-}
+public record RefreshRequest (
+        String refreshToken
+){}

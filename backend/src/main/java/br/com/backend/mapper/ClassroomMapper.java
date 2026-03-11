@@ -1,6 +1,6 @@
 package br.com.backend.mapper;
 
-import br.com.backend.DTO.response.ClassroomResponseDTO;
+import br.com.backend.dto.response.ClassroomResponseDTO;
 import br.com.backend.entity.Classroom;
 
 public final class ClassroomMapper {
