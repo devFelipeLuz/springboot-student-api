@@ -38,6 +38,7 @@ public class User implements UserDetails {
     private Instant deletedAt;
 
     @JsonIgnore
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
     public User(String email, String password, Role role) {

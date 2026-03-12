@@ -11,7 +11,7 @@ public final class StudentMapper {
     }
 
     public static StudentResponseDTO toDTO(Student student) {
-        String classroomName = student.getActiveEnrollments()
+        String classroomName = student.getActiveEnrollment()
                 .map(e -> e.getClassroom().getName())
                 .orElse(null);
 

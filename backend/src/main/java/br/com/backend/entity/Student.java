@@ -5,12 +5,8 @@ import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @NoArgsConstructor
@@ -31,16 +27,12 @@ public class Student {
     @Column(name = "active")
     private boolean active;
 
-    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
     public Student(String name) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Student name is null or blank");
-        }
-
+        ensureNotNullOrBlank();
         this.name = name;
         this.enrollments = new ArrayList<>();
         this.active = true;
@@ -48,6 +40,7 @@ public class Student {
 
     public void updateData(String name) {
         ensureActive();
+        ensureNotNullOrBlank();
         this.name = name;
     }
 
@@ -68,10 +61,11 @@ public class Student {
     }
 
     public void addEnrollment(Enrollment enrollment) {
+        validateCanEnroll();
         this.enrollments.add(enrollment);
     }
 
-    public Optional<Enrollment> getActiveEnrollments() {
+    public Optional<Enrollment> getActiveEnrollment() {
         return this.enrollments.stream()
                 .filter(e -> e.getStatus() == EnrollmentStatus.ACTIVE)
                 .findFirst();
@@ -80,6 +74,16 @@ public class Student {
     public void ensureActive() {
         if (!this.active) {
             throw new BusinessException("Aluno inativo");
+        }
+    }
+
+    public List<Enrollment> getEnrollments() {
+        return Collections.unmodifiableList(this.enrollments);
+    }
+
+    public void ensureNotNullOrBlank() {
+        if (this.name == null || this.name.isBlank()) {
+            throw new BusinessException("Student name is null or blank");
         }
     }
 }

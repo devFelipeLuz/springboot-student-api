@@ -24,19 +24,20 @@ public class StudentController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra Student")
+    @Operation(summary = "Create Student")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public StudentResponseDTO register(@Valid @RequestBody StudentRequestDTO dto) {
         return service.register(dto);
     }
 
-    @Operation(summary = "Busca Student por ID")
+    @Operation(summary = "Find Student by id")
     @GetMapping("/{id}")
     public StudentResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
-    @Operation(summary = "Busca Students e retorna em páginas")
+    @Operation(summary = "List students")
     @GetMapping
     public Page<StudentResponseDTO> findAll(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
@@ -44,22 +45,22 @@ public class StudentController {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca Students ativos e retorna em páginas")
+    @Operation(summary = "List active students")
     @GetMapping("/active")
     public Page<StudentResponseDTO> findAllByActive(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {
-        return service.findAllByActive(pageable);
+        return service.findAllActive(pageable);
     }
 
-    @Operation(summary = "Atualiza Student encontrado por ID")
+    @Operation(summary = "Update student")
     @PutMapping("/{id}")
     public StudentResponseDTO update(@PathVariable UUID id,
                           @Valid @RequestBody StudentRequestDTO dto) {
         return service.update(id, dto);
     }
 
-    @Operation(summary = "Deleta Student encotrado por ID")
+    @Operation(summary = "Deactivate student")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {

@@ -3,7 +3,6 @@ package br.com.backend.service;
 import br.com.backend.dto.request.StudentRequestDTO;
 import br.com.backend.dto.response.StudentResponseDTO;
 import br.com.backend.entity.Student;
-import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.StudentMapper;
 import br.com.backend.repository.StudentRepository;
@@ -27,8 +26,8 @@ public class StudentService {
 
     public StudentResponseDTO register(StudentRequestDTO dto) {
         Student student = new Student(dto.name());
-        repository.save(student);
-        return StudentMapper.toDTO(student);
+        Student saved = repository.save(student);
+        return StudentMapper.toDTO(saved);
     }
 
     public Page<StudentResponseDTO> findAll(Pageable pageable) {
@@ -36,7 +35,7 @@ public class StudentService {
                 .map(StudentMapper::toDTO);
     }
 
-    public Page<StudentResponseDTO> findAllByActive(Pageable pageable) {
+    public Page<StudentResponseDTO> findAllActive(Pageable pageable) {
         return repository.findByActiveTrue(pageable)
                 .map(StudentMapper::toDTO);
     }
@@ -60,11 +59,7 @@ public class StudentService {
     private Student findActiveStudentById(UUID id) {
         Student student = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
-
-        if (!student.isActive()) {
-            throw new BusinessException("Aluno inativo");
-        }
-
+        student.ensureActive();
         return student;
     }
 }
