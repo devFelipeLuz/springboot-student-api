@@ -24,14 +24,14 @@ public class StudentController {
         this.service = service;
     }
 
-    @Operation(summary = "Create Student")
+    @Operation(summary = "Create student")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public StudentResponseDTO register(@Valid @RequestBody StudentRequestDTO dto) {
         return service.register(dto);
     }
 
-    @Operation(summary = "Find Student by id")
+    @Operation(summary = "Find student by id")
     @GetMapping("/{id}")
     public StudentResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);

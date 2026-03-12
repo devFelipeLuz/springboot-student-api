@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record AssessmentRequestDTO (
+public record AssessmentCreateRequest(
         @NotNull String title,
         @NotNull AssessmentType type,
         @NotNull UUID teachingAssignmentId

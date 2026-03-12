@@ -24,13 +24,15 @@ public class EnrollmentController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra Enrollment")
+    @Operation(summary = "Create enrollment",
+    description = "Enrolls a student in a classroom for a given school year")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public EnrollmentResponseDTO register(@Valid @RequestBody EnrollmentRequestDTO dto) {
         return service.enroll(dto);
     }
 
-    @Operation(summary = "Busca Enrollment e retorna em páginas")
+    @Operation(summary = "List enrollments")
     @GetMapping
     public Page<EnrollmentResponseDTO> getEnrollments(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
@@ -38,24 +40,24 @@ public class EnrollmentController {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca Enrollments ativas e retorna em páginas")
+    @Operation(summary = "Find active enrollments")
     @GetMapping("/active")
     public Page<EnrollmentResponseDTO> getActiveEnrollments(
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            @PageableDefault(size = 10, sort = "enrolledAt", direction = Sort.Direction.DESC)
             Pageable pageable) {
-        return service.findAllByStatusActive(pageable);
+        return service.findAllActive(pageable);
     }
 
-    @Operation(summary = "Busca Enrollment por ID")
+    @Operation(summary = "Find enrollment by id")
     @GetMapping("/{id}")
     public EnrollmentResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
-    @Operation(summary = "Deleta Enrollment encontrada por ID")
+    @Operation(summary = "Cancel enrollment")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    public void cancelEnrollment(@PathVariable UUID id) {
         service.cancel(id);
     }
 }

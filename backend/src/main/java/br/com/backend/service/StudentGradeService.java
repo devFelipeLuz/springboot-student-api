@@ -49,8 +49,8 @@ public class StudentGradeService {
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
 
         StudentGrade grade = new StudentGrade(assessment, enrollment);
-        repository.save(grade);
-        return StudentGradeMapper.toDTO(grade);
+        StudentGrade saved = repository.save(grade);
+        return StudentGradeMapper.toDTO(saved);
     }
 
     public Page<StudentGradeResponseDTO> findAll(Pageable pageable) {
@@ -66,7 +66,7 @@ public class StudentGradeService {
 
     public StudentGradeResponseDTO update(UUID id, GradeUpdateDTO dto) {
         StudentGrade grade = findActiveStudentGrade(id);
-        grade.setGrade(dto.grade());
+        grade.updateGrade(dto.grade());
         return StudentGradeMapper.toDTO(grade);
     }
 

@@ -39,7 +39,7 @@ public class Enrollment {
     @Column(name = "enrollment_date", nullable = false, updatable = false)
     private Instant enrolledAt;
 
-    @Column(name = "cancellment_date")
+    @Column(name = "cancellation_date")
     private Instant canceledAt;
 
     public Enrollment(Student student, Classroom classroom, SchoolYear schoolYear) {
@@ -60,7 +60,6 @@ public class Enrollment {
         this.schoolYear = schoolYear;
         this.status = EnrollmentStatus.ACTIVE;
         this.enrolledAt = Instant.now();
-        this.canceledAt = null;
     }
 
     public boolean isActive() {
@@ -74,6 +73,7 @@ public class Enrollment {
 
     public void cancel() {
         ensureActive();
+        this.classroom.decreaseActiveEnrollmentsCount();
         this.status = EnrollmentStatus.CANCELED;
         this.canceledAt = Instant.now();
     }
@@ -82,5 +82,10 @@ public class Enrollment {
         if (!this.isActive()) {
             throw new BusinessException("Esta matrícula não está ativa");
         }
+    }
+
+    public void register() {
+        student.addEnrollment(this);
+        classroom.addEnrollment(this);
     }
 }

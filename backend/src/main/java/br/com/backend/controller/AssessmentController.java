@@ -1,9 +1,10 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.AssessmentRequestDTO;
+import br.com.backend.dto.request.AssessmentCreateRequest;
 import br.com.backend.dto.response.AssessmentResponseDTO;
 import br.com.backend.service.AssessmentService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,36 +24,36 @@ public class AssessmentController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra assessment")
+    @Operation(summary = "Create assessment")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public AssessmentResponseDTO register(@RequestBody AssessmentRequestDTO request) {
+    public AssessmentResponseDTO register(@Valid @RequestBody AssessmentCreateRequest request) {
         return service.register(request);
     }
 
-    @Operation(summary = "Busca todas assessments e retorna em páginas")
+    @Operation(summary = "List assessments")
     @GetMapping
     public Page<AssessmentResponseDTO> getAssessments(
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            @PageableDefault(size = 10, sort = "assessmentDate", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca assessment por ID")
+    @Operation(summary = "Find assessment by id")
     @GetMapping("/{id}")
-    public AssessmentResponseDTO findByID(@PathVariable UUID id) {
+    public AssessmentResponseDTO findById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
-    @Operation(summary = "Atualiza assessment encontrado por ID")
-    @PutMapping("/{id}")
-    public AssessmentResponseDTO update(
-            @PathVariable UUID id,
-            @RequestBody AssessmentRequestDTO request
+    @Operation(summary = "Update assessment")
+    @PatchMapping("/{id}")
+    public AssessmentResponseDTO update(@PathVariable UUID id,
+                                        @Valid @RequestBody AssessmentCreateRequest request
     ) {
         return service.update(id, request);
     }
 
-    @Operation(summary = "Deleta assessment por ID")
+    @Operation(summary = "Delete assessment")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {

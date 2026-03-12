@@ -1,10 +1,9 @@
 package br.com.backend.entity;
 
-
+import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.UUID;
 
@@ -29,7 +28,6 @@ public class StudentGrade {
     @JoinColumn(name = "enrollment_id", nullable = false)
     private Enrollment enrollment;
 
-    @Setter
     @Column(nullable = false)
     private Double grade;
 
@@ -45,5 +43,21 @@ public class StudentGrade {
         this.assessment = assessment;
         this.enrollment = enrollment;
         this.grade = null;
+    }
+
+    public void updateGrade(Double grade) {
+        if (grade == null) {
+            throw new BusinessException("Grade cannot be null");
+        }
+
+        if (this.enrollment == null) {
+            throw new BusinessException("Enrollment cannot be null");
+        }
+
+        if (this.assessment == null) {
+            throw new BusinessException("Assessment cannot be null");
+        }
+
+        this.grade = grade;
     }
 }

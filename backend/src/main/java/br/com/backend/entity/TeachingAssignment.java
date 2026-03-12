@@ -1,5 +1,6 @@
 package br.com.backend.entity;
 
+import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -48,5 +49,29 @@ public class TeachingAssignment {
         this.professor = professor;
         this.subject = subject;
         this.classroom = classroom;
+    }
+
+    private void ensureProfessorIsActive() {
+        if (!this.professor.isActive()) {
+            throw new BusinessException("Professor is not active");
+        }
+    }
+
+    private void ensureSchoolYearIsActive() {
+        if (!this.classroom.getSchoolYear().isActive()) {
+            throw new BusinessException("School year is not active");
+        }
+    }
+
+    private void ensureClassroomIsActive() {
+        if (!this.classroom.isActive()) {
+            throw new BusinessException("Classroom is not active");
+        }
+    }
+
+    public void ensureAllIsActive() {
+        ensureProfessorIsActive();
+        ensureSchoolYearIsActive();
+        ensureClassroomIsActive();
     }
 }

@@ -3,8 +3,6 @@ package br.com.backend.service;
 import br.com.backend.dto.request.EnrollmentRequestDTO;
 import br.com.backend.dto.response.EnrollmentResponseDTO;
 import br.com.backend.entity.*;
-import br.com.backend.entity.enums.EnrollmentStatus;
-import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.EnrollmentMapper;
 import br.com.backend.repository.*;
@@ -19,10 +17,10 @@ import java.util.UUID;
 @Transactional
 public class EnrollmentService {
 
-    private EnrollmentRepository repository;
-    private StudentRepository studentRepo;
-    private ClassroomRepository classRepository;
-    private SchoolYearRepository schoolYearRepository;
+    private final EnrollmentRepository repository;
+    private final StudentRepository studentRepo;
+    private final ClassroomRepository classRepository;
+    private final SchoolYearRepository schoolYearRepository;
 
     public EnrollmentService(
             EnrollmentRepository repository,
@@ -46,18 +44,13 @@ public class EnrollmentService {
         SchoolYear schoolYear = schoolYearRepository.findById(dto.schoolYearId())
                         .orElseThrow(() -> new EntityNotFoundException("SchoolYear não encontrado"));
 
-
-        classroom.validateCapacity();
+        classroom.ensureCanEnroll();
         student.validateCanEnroll();
 
         Enrollment enrollment = new Enrollment(student, classroom, schoolYear);
-
-        student.addEnrollment(enrollment);
-        classroom.addEnrollment(enrollment);
-
-        repository.save(enrollment);
-
-        return EnrollmentMapper.toDTO(enrollment);
+        enrollment.register();
+        Enrollment saved = repository.save(enrollment);
+        return EnrollmentMapper.toDTO(saved);
     }
 
     public Page<EnrollmentResponseDTO> findAll(Pageable pageable) {
@@ -65,7 +58,7 @@ public class EnrollmentService {
                 .map(EnrollmentMapper::toDTO);
     }
 
-    public Page<EnrollmentResponseDTO> findAllByStatusActive(Pageable pageable) {
+    public Page<EnrollmentResponseDTO> findAllActive(Pageable pageable) {
         return repository.findByStatusActive(pageable)
                 .map(EnrollmentMapper::toDTO);
     }
@@ -77,17 +70,13 @@ public class EnrollmentService {
 
     public void cancel(UUID id) {
         Enrollment enrollment = findActiveEnrollment(id);
-        enrollment.getClassroom().cancelEnrollment(enrollment);
+        enrollment.cancel();
     }
 
     public Enrollment findActiveEnrollment(UUID id) {
         Enrollment enrollment = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Matrícula não encontrada"));
-
-        if (enrollment.getStatus().equals(EnrollmentStatus.CANCELED)) {
-            throw new BusinessException("Esta matrícula já estava cancelada");
-        }
-
+        enrollment.ensureActive();
         return enrollment;
     }
 }

@@ -44,11 +44,18 @@ public class SchoolYear {
         this.year = year;
     }
 
+    public void ensureActive() {
+        if (!this.active) {
+            throw new BusinessException("School year is inactive");
+        }
+    }
+
     public void deactivate() {
         if (!this.active) {
             throw new BusinessException("School year is already inactive");
         }
 
         this.active = false;
+        this.endDate = Instant.now();
     }
 }

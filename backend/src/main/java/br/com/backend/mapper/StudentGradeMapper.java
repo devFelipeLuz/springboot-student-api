@@ -21,7 +21,7 @@ public final class StudentGradeMapper {
                 studentGrade.getGrade(),
                 assessment.getTitle(),
                 assessment.getType(),
-                assessment.getDate(),
+                assessment.getAssessmentDate(),
                 professor.getName(),
                 subject.getName()
         );

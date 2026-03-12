@@ -32,7 +32,7 @@ public class Student {
     private User user;
 
     public Student(String name) {
-        ensureNotNullOrBlank();
+        validateInput(name);
         this.name = name;
         this.enrollments = new ArrayList<>();
         this.active = true;
@@ -40,7 +40,7 @@ public class Student {
 
     public void updateData(String name) {
         ensureActive();
-        ensureNotNullOrBlank();
+        validateInput(name);
         this.name = name;
     }
 
@@ -81,8 +81,8 @@ public class Student {
         return Collections.unmodifiableList(this.enrollments);
     }
 
-    public void ensureNotNullOrBlank() {
-        if (this.name == null || this.name.isBlank()) {
+    public void validateInput(String name) {
+        if (name == null || name.isBlank()) {
             throw new BusinessException("Student name is null or blank");
         }
     }

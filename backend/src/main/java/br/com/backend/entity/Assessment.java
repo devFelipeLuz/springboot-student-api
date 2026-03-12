@@ -1,6 +1,7 @@
 package br.com.backend.entity;
 
 import br.com.backend.entity.enums.AssessmentType;
+import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,30 +30,34 @@ public class Assessment {
     private TeachingAssignment teachingAssignment;
 
     @Column(nullable = false, updatable = false)
-    private Instant date;
+    private Instant assessmentDate;
 
-    public Assessment(String title, AssessmentType type, TeachingAssignment teachingAssignment) {
+    public Assessment(TeachingAssignment teachingAssignment, String title, AssessmentType type) {
+        validateInput(teachingAssignment, title, type);
+        this.title = title;
+        this.type = type;
+        this.teachingAssignment = teachingAssignment;
+        this.assessmentDate = Instant.now();
+    }
+
+    public void updateData(TeachingAssignment teachingAssignment, String title, AssessmentType type) {
+        validateInput(teachingAssignment, title, type);
+        this.title = title;
+        this.type = type;
+        this.teachingAssignment = teachingAssignment;
+    }
+
+    private void validateInput(TeachingAssignment teachingAssignment, String title, AssessmentType type) {
+        if (teachingAssignment == null) {
+            throw new BusinessException("TeachingAssignment cannot be null");
+        }
+
         if (title == null || title.isBlank()) {
-            throw new IllegalArgumentException("Title is null or blank");
+            throw new BusinessException("Title is null or blank");
         }
 
         if (type == null) {
-            throw new IllegalArgumentException("Type is null or blank");
+            throw new BusinessException("Type is null or blank");
         }
-
-        if (teachingAssignment == null) {
-            throw new IllegalArgumentException("TeachingAssignment is null or blank");
-        }
-
-        this.title = title;
-        this.type = type;
-        this.teachingAssignment = teachingAssignment;
-        this.date = Instant.now();
-    }
-
-    public void updateData(String title, AssessmentType type, TeachingAssignment teachingAssignment) {
-        this.title = title;
-        this.type = type;
-        this.teachingAssignment = teachingAssignment;
     }
 }

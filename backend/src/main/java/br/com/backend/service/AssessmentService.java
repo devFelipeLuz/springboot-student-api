@@ -1,6 +1,6 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.AssessmentRequestDTO;
+import br.com.backend.dto.request.AssessmentCreateRequest;
 import br.com.backend.dto.response.AssessmentResponseDTO;
 import br.com.backend.entity.Assessment;
 import br.com.backend.entity.TeachingAssignment;
@@ -28,18 +28,19 @@ public class AssessmentService {
         this.teachingAssignmentRepository = teachingAssignmentRepository;
     }
 
-    public AssessmentResponseDTO register(AssessmentRequestDTO dto) {
-        TeachingAssignment teachingAssignment = teachingAssignmentRepository.findById(dto.teachingAssignmentId())
+    public AssessmentResponseDTO register(AssessmentCreateRequest dto) {
+        TeachingAssignment teachingAssignment = teachingAssignmentRepository
+                .findById(dto.teachingAssignmentId())
                 .orElseThrow(() -> new EntityNotFoundException("TeachingAssignment not found"));
+        teachingAssignment.ensureAllIsActive();
 
         Assessment assessment = new Assessment(
+                teachingAssignment,
                 dto.title(),
-                dto.type(),
-                teachingAssignment);
+                dto.type());
 
-        repository.save(assessment);
-
-        return AssessmentMapper.toDTO(assessment);
+        Assessment saved = repository.save(assessment);
+        return AssessmentMapper.toDTO(saved);
     }
 
     public Page<AssessmentResponseDTO> findAll(Pageable pageable) {
@@ -50,18 +51,17 @@ public class AssessmentService {
     public AssessmentResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(AssessmentMapper::toDTO)
-                .orElseThrow(() -> new EntityNotFoundException("Assessment não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
     }
 
-    public AssessmentResponseDTO update(UUID id, AssessmentRequestDTO dto) {
+    public AssessmentResponseDTO update(UUID id, AssessmentCreateRequest dto) {
         Assessment assessment = findAssessmentById(id);
         TeachingAssignment teachingAssignment = assessment.getTeachingAssignment();
 
         assessment.updateData(
+                teachingAssignment,
                 dto.title(),
-                dto.type(),
-                teachingAssignment
-        );
+                dto.type());
 
         return AssessmentMapper.toDTO(assessment);
     }

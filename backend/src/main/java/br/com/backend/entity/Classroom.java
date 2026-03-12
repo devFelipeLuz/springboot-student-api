@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -35,22 +36,58 @@ public class Classroom {
     @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
     private List<Enrollment> enrollments;
 
+    @Column(name = "active")
+    private boolean active;
+
     public Classroom(String name, SchoolYear schoolYear) {
+        if (name == null || name.isBlank()) {
+            throw new BusinessException("Name cannot be null or blank");
+        }
+
+        if (schoolYear == null) {
+            throw new BusinessException("School year cannot be null");
+        }
+
+        schoolYear.ensureActive();
+
         this.name = name;
         this.maxCapacity = 25;
         this.schoolYear = schoolYear;
         this.activeEnrollmentsCount = 0;
         this.enrollments = new ArrayList<>();
+        this.active = true;
     }
 
-    public void validateCapacity() {
+    private void ensureCapacity() {
         if (activeEnrollmentsCount >= maxCapacity) {
-            throw new BusinessException("Turma lotada");
+            throw new BusinessException("Classroom is full");
         }
     }
 
+    private void ensureSchoolYearIsActive() {
+        if (!schoolYear.isActive()) {
+            throw new BusinessException("School year is not active");
+        }
+    }
+
+    public void ensureCanEnroll() {
+        ensureCapacity();
+        ensureSchoolYearIsActive();
+    }
+
+    public void changeCapacity(int newCapacity) {
+        if (newCapacity < activeEnrollmentsCount) {
+            throw new BusinessException("The new capacity cannot be less than active enrollments");
+        }
+
+        this.maxCapacity = newCapacity;
+    }
+
     public void addEnrollment(Enrollment enrollment) {
-        validateCapacity();
+        if (enrollment == null) {
+            throw new BusinessException("Enrollment cannot be null");
+        }
+
         this.enrollments.add(enrollment);
         increaseActiveEnrollmentsCount();
     }
@@ -71,12 +108,11 @@ public class Classroom {
         this.activeEnrollmentsCount--;
     }
 
-    public void cancelEnrollment(Enrollment enrollment) {
-        enrollment.cancel();
-        this.decreaseActiveEnrollmentsCount();
+    public List<Enrollment> getEnrollments() {
+        return Collections.unmodifiableList(enrollments);
     }
 
-    public void changeCapacity(int newCapacity) {
-        this.maxCapacity = newCapacity;
+    public void deactivate() {
+        this.active = false;
     }
 }
