@@ -1,10 +1,10 @@
 package br.com.backend.dto.request;
 
-import br.com.backend.entity.Classroom;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-public record StudentRequestDTO(
+public record StudentCreateRequest(
         @NotBlank(message = "Name is required")
         String name,
 
@@ -12,6 +12,6 @@ public record StudentRequestDTO(
         @NotBlank(message = "Email is required")
         String email,
 
-        @NotBlank(message = "Classroom is required")
-        Classroom classroom
+        @NotNull @NotBlank(message = "Password is required")
+        String password
 ) {}

@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
 import br.com.backend.dto.request.ClassroomChangeCapacityRequest;
-import br.com.backend.dto.request.ClassroomRequestDTO;
+import br.com.backend.dto.request.ClassroomCreateRequest;
 import br.com.backend.dto.response.ClassroomResponseDTO;
 import br.com.backend.service.ClassroomService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,13 +28,13 @@ public class ClassroomController {
     @Operation(summary = "Create classroom")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ClassroomResponseDTO register(@Valid @RequestBody ClassroomRequestDTO dto) {
+    public ClassroomResponseDTO register(@Valid @RequestBody ClassroomCreateRequest dto) {
         return service.register(dto);
     }
 
     @Operation(summary = "List classrooms")
     @GetMapping
-    public Page<ClassroomResponseDTO> findAll(
+    public Page<ClassroomResponseDTO> getClassrooms(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
             Pageable pageable) {
         return service.findAll(pageable);
@@ -42,21 +42,21 @@ public class ClassroomController {
 
     @Operation(summary = "Find classroom by id")
     @GetMapping("/{id}")
-    public ClassroomResponseDTO findById(@PathVariable UUID id) {
+    public ClassroomResponseDTO getClassroomById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
     @Operation(summary = "Change classroom capacity")
     @PatchMapping("/{id}")
-    public ClassroomResponseDTO changeCapacity(@PathVariable UUID id,
-                                              @Valid @RequestBody ClassroomChangeCapacityRequest dto) {
+    public ClassroomResponseDTO changeClassroomCapacity(@PathVariable UUID id,
+                                                        @Valid @RequestBody ClassroomChangeCapacityRequest dto) {
         return service.changeCapacity(id, dto);
     }
 
     @Operation(summary = "Deactivate classroom")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void deactivate(@PathVariable UUID id) {
-        service.deactivateClassroom(id);
+    public void deactivateClassroom(@PathVariable UUID id) {
+        service.deactivate(id);
     }
 }

@@ -1,10 +1,12 @@
 package br.com.backend.entity;
 
 import br.com.backend.entity.enums.AttendanceStatus;
+import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -32,25 +34,31 @@ public class AttendanceRecord {
     @Column(nullable = false)
     private AttendanceStatus status;
 
-    public AttendanceRecord(AttendanceSession attendanceSession, Enrollment enrollment, AttendanceStatus status) {
-        if (attendanceSession == null) {
-            throw new IllegalArgumentException("AttendanceSession cannot be null");
-        }
+    public AttendanceRecord(AttendanceSession attendanceSession,
+                            Enrollment enrollment,
+                            AttendanceStatus status) {
 
-        if (enrollment == null) {
-            throw new IllegalArgumentException("Enrollment cannot be null");
-        }
-
-        if (status == null) {
-            throw new IllegalArgumentException("AttendanceStatus cannot be null");
-        }
-
-        this.attendanceSession = attendanceSession;
-        this.enrollment = enrollment;
-        this.status = status;
+        this.attendanceSession = Objects.requireNonNull(
+                attendanceSession, "AttendanceSession cannot be null");
+        this.enrollment = Objects.requireNonNull(enrollment, "Enrollment cannot be null");
+        this.status = ensureStatus(status);
     }
 
     public void updateStatus(AttendanceStatus status) {
-        this.status = status;
+        this.status = ensureStatus(status);
+    }
+
+    private AttendanceStatus ensureStatus(AttendanceStatus status) {
+        if (status == null) {
+            throw new BusinessException("Status cannot be null");
+        }
+
+        if (!status.equals(AttendanceStatus.PRESENT) &&
+            !status.equals(AttendanceStatus.ABSENT) &&
+            !status.equals(AttendanceStatus.JUSTIFIED_ABSENCE)) {
+
+            throw new BusinessException("Status must be present, absent or justified_absent");
+        }
+        return status;
     }
 }

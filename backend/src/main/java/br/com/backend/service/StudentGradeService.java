@@ -1,15 +1,14 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.StudentGradeRequestDTO;
+import br.com.backend.dto.request.StudentGradeCreateRequest;
 import br.com.backend.dto.response.StudentGradeResponseDTO;
-import br.com.backend.dto.request.GradeUpdateDTO;
+import br.com.backend.dto.request.StudentGradeUpdateRequest;
 import br.com.backend.entity.Assessment;
 import br.com.backend.entity.Enrollment;
 import br.com.backend.entity.StudentGrade;
+import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.StudentGradeMapper;
-import br.com.backend.repository.AssessmentRepository;
-import br.com.backend.repository.EnrollmentRepository;
 import br.com.backend.repository.StudentGradeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,32 +22,29 @@ import java.util.UUID;
 public class StudentGradeService {
 
     private final StudentGradeRepository repository;
-    private final AssessmentRepository assessmentRepository;
-    private final EnrollmentRepository  enrollmentRepository;
+    private final AssessmentService assessmentService;
+    private final EnrollmentService enrollmentService;
 
     public StudentGradeService(StudentGradeRepository repository,
-                               AssessmentRepository assessmentRepository,
-                               EnrollmentRepository enrollmentRepository) {
+                               AssessmentService assessmentService,
+                               EnrollmentService enrollmentService) {
 
         this.repository = repository;
-        this.assessmentRepository = assessmentRepository;
-        this.enrollmentRepository = enrollmentRepository;
+        this.assessmentService = assessmentService;
+        this.enrollmentService = enrollmentService;
     }
 
-    public StudentGradeResponseDTO register(StudentGradeRequestDTO dto) {
+    public StudentGradeResponseDTO register(StudentGradeCreateRequest dto) {
         if (repository.existsByAssessmentIdAndEnrollmentId(
-                 dto.assessmentId(), dto.enrollmentId())) {
+                dto.assessmentId(), dto.enrollmentId())) {
 
-            throw new IllegalStateException("Grade already exists for this student and assessment");
+            throw new BusinessException("Grade already exists for this student and assessment");
         }
 
-        Assessment assessment = assessmentRepository.findById(dto.assessmentId())
-                .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
+        Assessment assessment = assessmentService.findAssessmentById(dto.assessmentId());
+        Enrollment enrollment = enrollmentService.findActiveEnrollmentById(dto.enrollmentId());
 
-        Enrollment enrollment = enrollmentRepository.findById(dto.enrollmentId())
-                .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
-
-        StudentGrade grade = new StudentGrade(assessment, enrollment);
+        StudentGrade grade = new StudentGrade(assessment, enrollment, dto.maxScore());
         StudentGrade saved = repository.save(grade);
         return StudentGradeMapper.toDTO(saved);
     }
@@ -64,23 +60,23 @@ public class StudentGradeService {
                 .orElseThrow(() -> new EntityNotFoundException("Grade not found"));
     }
 
-    public StudentGradeResponseDTO update(UUID id, GradeUpdateDTO dto) {
-        StudentGrade grade = findActiveStudentGrade(id);
+    public Page<StudentGradeResponseDTO> findGradeByAssessmentId(UUID assessmentId, Pageable pageable) {
+        return repository.findByAssessmentId(assessmentId, pageable)
+                .map(StudentGradeMapper::toDTO);
+    }
+
+    public StudentGradeResponseDTO update(UUID id, StudentGradeUpdateRequest dto) {
+        StudentGrade grade = findStudentGradeById(id);
         grade.updateGrade(dto.grade());
         return StudentGradeMapper.toDTO(grade);
     }
 
     public void delete(UUID id) {
-        StudentGrade grade = findActiveStudentGrade(id);
+        StudentGrade grade = findStudentGradeById(id);
         repository.delete(grade);
     }
 
-    public Page<StudentGradeResponseDTO> findByAssessmentId(UUID assessmentId, Pageable pageable) {
-        return repository.findByAssessmentId(assessmentId, pageable)
-                .map(StudentGradeMapper::toDTO);
-    }
-
-    private StudentGrade findActiveStudentGrade(UUID id) {
+    private StudentGrade findStudentGradeById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Grade not found"));
     }

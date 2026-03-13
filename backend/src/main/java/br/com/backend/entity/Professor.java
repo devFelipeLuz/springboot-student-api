@@ -1,9 +1,11 @@
 package br.com.backend.entity;
 
+import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -27,16 +29,8 @@ public class Professor {
     private boolean active;
 
     public Professor(String name, User user) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Name cannot be null or blank");
-        }
-
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
-        }
-
-        this.name = name;
-        this.user = user;
+        this.name = validateName(name);
+        this.user = Objects.requireNonNull(user, "User cannot be null");
         this.active = true;
     }
 
@@ -45,6 +39,20 @@ public class Professor {
     }
 
     public void updateName(String name) {
-        this.name = name;
+        this.name = validateName(name);
+    }
+
+    private String validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new BusinessException("Name cannot be null or blank");
+        }
+
+        return name;
+    }
+
+    public void ensureActive() {
+        if (!this.active) {
+            throw  new BusinessException("Professor is not active");
+        }
     }
 }

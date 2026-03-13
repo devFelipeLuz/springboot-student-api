@@ -1,6 +1,6 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.SchoolYearRequestDTO;
+import br.com.backend.dto.request.SchoolYearRequest;
 import br.com.backend.dto.response.SchoolYearResponseDTO;
 import br.com.backend.service.SchooYearService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,35 +22,36 @@ public class SchoolYearController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra SchoolYear")
+    @Operation(summary = "Create schoolYear")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public SchoolYearResponseDTO register(@Valid @RequestBody SchoolYearRequestDTO dto) {
+    public SchoolYearResponseDTO register(@Valid @RequestBody SchoolYearRequest dto) {
         return service.register(dto);
     }
 
-    @Operation(summary = "Busca SchoolYears e retorna em páginas")
+    @Operation(summary = "List schoolYears")
     @GetMapping
     public Page<SchoolYearResponseDTO> getSchoolYears(Pageable pageable) {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca SchoolYear por ID")
+    @Operation(summary = "Find schoolYear by id")
     @GetMapping("/{id}")
-    public SchoolYearResponseDTO findById(@PathVariable UUID id) {
+    public SchoolYearResponseDTO getSchollYearById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
-    @Operation(summary = "Atualiza SchoolYear encontrado por ID")
+    @Operation(summary = "Update schoolYear")
     @PatchMapping("/{id}")
     public SchoolYearResponseDTO update(@PathVariable UUID id,
-                                        @Valid @RequestBody SchoolYearRequestDTO dto) {
+                                        @Valid @RequestBody SchoolYearRequest dto) {
         return service.update(id, dto);
     }
 
-    @Operation(summary = "Desativa SchoolYear encontrado por ID")
+    @Operation(summary = "Deactivate schoolYear")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
-        service.delete(id);
+    public void deactivateSchoolYear(@PathVariable UUID id) {
+        service.deactivate(id);
     }
 }

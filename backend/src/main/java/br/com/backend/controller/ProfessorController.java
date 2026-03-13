@@ -1,6 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.ProfessorRequestDTO;
+import br.com.backend.dto.request.ProfessorCreateRequest;
+import br.com.backend.dto.request.ProfessorUpdateRequest;
 import br.com.backend.dto.response.ProfessorResponseDTO;
 import br.com.backend.service.ProfessorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,13 +25,14 @@ public class ProfessorController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra Professor")
+    @Operation(summary = "Create professor")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ProfessorResponseDTO register(@Valid @RequestBody ProfessorRequestDTO dto) {
+    public ProfessorResponseDTO register(@Valid @RequestBody ProfessorCreateRequest dto) {
         return service.register(dto);
     }
 
-    @Operation(summary = "Busca Professor e retorna em páginas")
+    @Operation(summary = "List professors")
     @GetMapping
     public Page<ProfessorResponseDTO> getProfessors(
             @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
@@ -38,23 +40,23 @@ public class ProfessorController {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca Professor por ID")
+    @Operation(summary = "Find professor by id")
     @GetMapping("/{id}")
-    public ProfessorResponseDTO findById(@PathVariable UUID professorId) {
-        return service.findById(professorId);
+    public ProfessorResponseDTO getProfessorById(@PathVariable UUID id) {
+        return service.findById(id);
     }
 
-    @Operation(summary = "Atualiza Professor encontrado por ID")
+    @Operation(summary = "Update professor")
     @PatchMapping("/{id}")
-    public ProfessorResponseDTO update(@PathVariable UUID professorId,
-                                                @Valid @RequestBody ProfessorRequestDTO dto) {
-        return service.update(professorId, dto);
+    public ProfessorResponseDTO update(@PathVariable UUID id,
+                                       @Valid @RequestBody ProfessorUpdateRequest dto) {
+        return service.update(id, dto);
     }
 
-    @Operation(summary = "Desativa Professor encontrado por ID")
+    @Operation(summary = "Deactivate professor")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void deleteProfessor(@PathVariable UUID professorId) {
-        service.delete(professorId);
+    public void deactivateProfessor(@PathVariable UUID id) {
+        service.deactivate(id);
     }
 }

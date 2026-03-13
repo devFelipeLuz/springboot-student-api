@@ -1,12 +1,14 @@
 package br.com.backend.entity;
 
 import br.com.backend.entity.enums.AttendanceStatus;
+import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,30 +37,21 @@ public class AttendanceSession {
     private Set<AttendanceRecord> records = new HashSet<>();
 
     public AttendanceSession(TeachingAssignment teachingAssignment, LocalDate date) {
-        if (teachingAssignment == null) {
-            throw new IllegalArgumentException("Teaching assignment cannot be null");
-        }
-
-        if (date == null) {
-            throw new IllegalArgumentException("Date cannot be null");
-        }
-
-        this.teachingAssignment = teachingAssignment;
-        this.date = date;
+        this.teachingAssignment = Objects.requireNonNull(
+                teachingAssignment, "Teaching assignment cannot be null");
+        this.date = Objects.requireNonNull(date, "Date cannot be null");
     }
 
-    public AttendanceRecord registerAttendance(Enrollment enrollment, AttendanceStatus status) {
+    public void registerAttendance(Enrollment enrollment, AttendanceStatus status) {
         AttendanceRecord record = new AttendanceRecord(this, enrollment, status);
         records.add(record);
-        return record;
     }
 
     public void updateAttendance(UUID id, AttendanceStatus newStatus) {
         this.records.stream()
                 .filter(record -> record.getId().equals(id))
                 .findFirst()
-                .ifPresentOrElse(
-                        record -> record.updateStatus(newStatus),
+                .ifPresentOrElse(record -> record.updateStatus(newStatus),
                         () -> {
                             throw new EntityNotFoundException("Registro de presença não encontrado nesta sessão");
                         }

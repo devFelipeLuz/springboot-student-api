@@ -1,6 +1,7 @@
 package br.com.backend.controller;
 
 import br.com.backend.dto.request.AssessmentCreateRequest;
+import br.com.backend.dto.request.AssessmentUpdateRequest;
 import br.com.backend.dto.response.AssessmentResponseDTO;
 import br.com.backend.service.AssessmentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,8 +28,8 @@ public class AssessmentController {
     @Operation(summary = "Create assessment")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public AssessmentResponseDTO register(@Valid @RequestBody AssessmentCreateRequest request) {
-        return service.register(request);
+    public AssessmentResponseDTO register(@Valid @RequestBody AssessmentCreateRequest dto) {
+        return service.register(dto);
     }
 
     @Operation(summary = "List assessments")
@@ -41,16 +42,15 @@ public class AssessmentController {
 
     @Operation(summary = "Find assessment by id")
     @GetMapping("/{id}")
-    public AssessmentResponseDTO findById(@PathVariable UUID id) {
+    public AssessmentResponseDTO getAssessmentById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
     @Operation(summary = "Update assessment")
     @PatchMapping("/{id}")
-    public AssessmentResponseDTO update(@PathVariable UUID id,
-                                        @Valid @RequestBody AssessmentCreateRequest request
-    ) {
-        return service.update(id, request);
+    public AssessmentResponseDTO updateAssessment(@PathVariable UUID id,
+                                                  @Valid @RequestBody AssessmentUpdateRequest dto) {
+        return service.update(id, dto);
     }
 
     @Operation(summary = "Delete assessment")

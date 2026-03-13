@@ -34,17 +34,9 @@ public class TeachingAssignment {
     private Classroom classroom;
 
     public TeachingAssignment (Professor professor, Subject subject, Classroom classroom) {
-        if (professor == null)  {
-            throw new IllegalArgumentException("professor is null");
-        }
-
-        if (subject == null)  {
-            throw new IllegalArgumentException("subject is null");
-        }
-
-        if (classroom == null)  {
-            throw new IllegalArgumentException("classroom is null");
-        }
+        if (professor == null) throw new BusinessException("professor cannot be null");
+        if (subject == null) throw new BusinessException("subject cannot be null");
+        if (classroom == null) throw new BusinessException("classroom cannot be null");
 
         this.professor = professor;
         this.subject = subject;

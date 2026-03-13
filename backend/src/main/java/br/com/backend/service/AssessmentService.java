@@ -1,13 +1,13 @@
 package br.com.backend.service;
 
 import br.com.backend.dto.request.AssessmentCreateRequest;
+import br.com.backend.dto.request.AssessmentUpdateRequest;
 import br.com.backend.dto.response.AssessmentResponseDTO;
 import br.com.backend.entity.Assessment;
 import br.com.backend.entity.TeachingAssignment;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.AssessmentMapper;
 import br.com.backend.repository.AssessmentRepository;
-import br.com.backend.repository.TeachingAssignmentRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,24 +20,22 @@ import java.util.UUID;
 public class AssessmentService {
 
     private final AssessmentRepository repository;
-    private final TeachingAssignmentRepository teachingAssignmentRepository;
+    private final TeachingAssignmentService teachingAssignmentService;
 
     public AssessmentService(AssessmentRepository repository,
-                             TeachingAssignmentRepository teachingAssignmentRepository) {
+                             TeachingAssignmentService teachingAssignmentService) {
+
         this.repository = repository;
-        this.teachingAssignmentRepository = teachingAssignmentRepository;
+        this.teachingAssignmentService = teachingAssignmentService;
     }
 
     public AssessmentResponseDTO register(AssessmentCreateRequest dto) {
-        TeachingAssignment teachingAssignment = teachingAssignmentRepository
-                .findById(dto.teachingAssignmentId())
-                .orElseThrow(() -> new EntityNotFoundException("TeachingAssignment not found"));
-        teachingAssignment.ensureAllIsActive();
+        TeachingAssignment assignment = teachingAssignmentService
+                .findAssignmentById(dto.teachingAssignmentId());
 
-        Assessment assessment = new Assessment(
-                teachingAssignment,
-                dto.title(),
-                dto.type());
+        assignment.ensureAllIsActive();
+
+        Assessment assessment = new Assessment(assignment, dto.title(), dto.type());
 
         Assessment saved = repository.save(assessment);
         return AssessmentMapper.toDTO(saved);
@@ -54,14 +52,16 @@ public class AssessmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
     }
 
-    public AssessmentResponseDTO update(UUID id, AssessmentCreateRequest dto) {
+    public AssessmentResponseDTO update(UUID id, AssessmentUpdateRequest dto) {
         Assessment assessment = findAssessmentById(id);
-        TeachingAssignment teachingAssignment = assessment.getTeachingAssignment();
 
-        assessment.updateData(
-                teachingAssignment,
-                dto.title(),
-                dto.type());
+        if (dto.title() != null) {
+            assessment.updateTitle(dto.title());
+        }
+
+        if (dto.type() != null) {
+            assessment.updateType(dto.type());
+        }
 
         return AssessmentMapper.toDTO(assessment);
     }
@@ -71,7 +71,7 @@ public class AssessmentService {
         repository.delete(assessment);
     }
 
-    private Assessment findAssessmentById(UUID assessmentId) {
+    protected Assessment findAssessmentById(UUID assessmentId) {
         return repository.findById(assessmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
     }

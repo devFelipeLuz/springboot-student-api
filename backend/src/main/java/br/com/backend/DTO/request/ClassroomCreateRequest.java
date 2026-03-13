@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record ClassroomRequestDTO(
+public record ClassroomCreateRequest(
         @NotBlank(message = "Classroom is required")
         String name,
 

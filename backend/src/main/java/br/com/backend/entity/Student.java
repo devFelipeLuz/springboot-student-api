@@ -31,17 +31,16 @@ public class Student {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    public Student(String name) {
-        validateInput(name);
-        this.name = name;
+    public Student(String name, User user) {
+        this.name = validateName(name);
+        this.user = Objects.requireNonNull(user, "User cannot be null");
         this.enrollments = new ArrayList<>();
         this.active = true;
     }
 
-    public void updateData(String name) {
+    public void updateName(String name) {
         ensureActive();
-        validateInput(name);
-        this.name = name;
+        this.name = validateName(name);
     }
 
     public void deactivate() {
@@ -53,15 +52,15 @@ public class Student {
                 .anyMatch(e -> e.getStatus() == EnrollmentStatus.ACTIVE);
     }
 
-    public void validateCanEnroll() {
+    public void ensureCanEnroll() {
         ensureActive();
         if (hasActiveEnrollment()) {
-            throw new BusinessException("Aluno já possui matrícula ativa");
+            throw new BusinessException("Student is already enrolled");
         }
     }
 
     public void addEnrollment(Enrollment enrollment) {
-        validateCanEnroll();
+        ensureCanEnroll();
         this.enrollments.add(enrollment);
     }
 
@@ -81,9 +80,10 @@ public class Student {
         return Collections.unmodifiableList(this.enrollments);
     }
 
-    public void validateInput(String name) {
+    private String validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new BusinessException("Student name is null or blank");
         }
+        return name;
     }
 }

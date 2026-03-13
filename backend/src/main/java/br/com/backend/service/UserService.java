@@ -1,8 +1,9 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.UserCreateRequestDTO;
+import br.com.backend.dto.request.UserCreateRequest;
 import br.com.backend.dto.response.UserResponseDTO;
 import br.com.backend.entity.User;
+import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.UserMapper;
 import br.com.backend.repository.UserRepository;
@@ -21,58 +22,78 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder encoder;
 
-    public UserService(UserRepository repository, PasswordEncoder encoder) {
+    public UserService(UserRepository repository,
+                       PasswordEncoder encoder) {
+
         this.repository = repository;
         this.encoder = encoder;
     }
 
-    public UserResponseDTO register(UserCreateRequestDTO dto) {
-        String encodedPassword = encoder.encode(dto.password());
-
-        User adminUser = User.createUser(
-                dto.email(),
-                encodedPassword,
-                dto.role());
-
-        repository.save(adminUser);
-
-        return UserMapper.toDTO(adminUser);
+    //Usado pelo controller
+    public UserResponseDTO register(UserCreateRequest dto) {
+        User saved = createUser(dto.email(), dto.password(), dto.role());
+        return UserMapper.toDTO(saved);
     }
 
+    //Usado por services internos
+    public User createUser(String email, String password, Role role) {
+        String encodedPassword = encoder.encode(password);
+        User user = User.createUser(email, encodedPassword, role);
+        return repository.save(user);
+    }
+
+    //Usado pelo controller
     public Page<UserResponseDTO> findAll(Pageable pageable) {
         return repository.findAll(pageable)
                 .map(UserMapper::toDTO);
     }
 
+    //Usado pelo controller
     public Page<UserResponseDTO> findAllEnabled(Pageable pageable) {
         return repository.findAllByEnabledTrue(pageable)
                 .map(UserMapper::toDTO);
     }
 
+    //Usado pelo controller
     public UserResponseDTO findById(UUID id) {
-        User user = findActiveUserById(id);
+        return repository.findById(id)
+                .map(UserMapper::toDTO)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    }
+
+    //Usado pelo controller
+    public UserResponseDTO updateEmail(UUID id, UserCreateRequest dto) {
+        User user = changeEmail(id, dto.email());
         return UserMapper.toDTO(user);
     }
 
-    public UserResponseDTO updateEmail(UUID id, UserCreateRequestDTO dto) {
-        User adminUser = findActiveUserById(id);
-        adminUser.updateEmail(dto.email());
-        return UserMapper.toDTO(adminUser);
+    //Usado pelo controller
+    public UserResponseDTO updatePassword(UUID id, UserCreateRequest dto) {
+        User user = changePassword(id, dto.password());
+        return UserMapper.toDTO(user);
     }
 
-    public UserResponseDTO updatePassword(UUID id, UserCreateRequestDTO dto) {
-        String encondedPassword = encoder.encode(dto.password());
-        User adminUser = findActiveUserById(id);
-        adminUser.updatePassword(encondedPassword);
-        return UserMapper.toDTO(adminUser);
+    //Usado por services internos
+    public User changeEmail(UUID id, String email) {
+        User user = findActiveUserById(id);
+        user.updateEmail(email);
+        return user;
     }
 
-    public void delete(UUID id) {
+    //Usado por services internos
+    public User changePassword(UUID id, String password) {
+        User user = findActiveUserById(id);
+        user.updatePassword(encoder.encode(password));
+        return user;
+    }
+
+    //Usado pelo controller
+    public void deactivateUser(UUID id) {
         User user = findActiveUserById(id);
         user.deactivate();
     }
 
-    public User findActiveUserById(UUID id) {
+    private User findActiveUserById(UUID id) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User não encontrado"));
         user.isEnabled();

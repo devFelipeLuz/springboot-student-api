@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
-public record EnrollmentRequestDTO(
+public record EnrollmentRequest(
         @NotNull @NotBlank(message = "StudentID is required")
         UUID studentId,
 

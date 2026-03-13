@@ -19,6 +19,7 @@ public final class StudentGradeMapper {
                 studentGrade.getId(),
                 student.getName(),
                 studentGrade.getGrade(),
+                studentGrade.getMaxScore(),
                 assessment.getTitle(),
                 assessment.getType(),
                 assessment.getAssessmentDate(),

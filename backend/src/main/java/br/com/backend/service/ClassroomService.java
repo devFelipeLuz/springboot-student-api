@@ -1,14 +1,13 @@
 package br.com.backend.service;
 
 import br.com.backend.dto.request.ClassroomChangeCapacityRequest;
-import br.com.backend.dto.request.ClassroomRequestDTO;
+import br.com.backend.dto.request.ClassroomCreateRequest;
 import br.com.backend.dto.response.ClassroomResponseDTO;
 import br.com.backend.entity.Classroom;
 import br.com.backend.entity.SchoolYear;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.ClassroomMapper;
 import br.com.backend.repository.ClassroomRepository;
-import br.com.backend.repository.SchoolYearRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,18 +20,16 @@ import java.util.UUID;
 public class ClassroomService {
 
     private final ClassroomRepository repository;
-    private final SchoolYearRepository schoolYearRepository;
+    private final SchooYearService schooYearService;
 
     public ClassroomService(ClassroomRepository repository,
-                            SchoolYearRepository schoolYearRepository) {
+                            SchooYearService schooYearService) {
         this.repository = repository;
-        this.schoolYearRepository = schoolYearRepository;
+        this.schooYearService = schooYearService;
     }
 
-    public ClassroomResponseDTO register(ClassroomRequestDTO dto) {
-        SchoolYear schoolYear = schoolYearRepository.findById(dto.schoolYearId())
-                .orElseThrow(() -> new EntityNotFoundException("School Year Not Found"));
-        schoolYear.ensureActive();
+    public ClassroomResponseDTO register(ClassroomCreateRequest dto) {
+        SchoolYear schoolYear = schooYearService.findActiveSchoolYear(dto.schoolYearId());
 
         Classroom classroom = new Classroom(dto.name(), schoolYear);
         Classroom saved = repository.save(classroom);
@@ -45,24 +42,27 @@ public class ClassroomService {
     }
 
     public ClassroomResponseDTO findById(UUID id) {
-        Classroom classroom = findClassroom(id);
-        return ClassroomMapper.toDTO(classroom);
+        return repository.findById(id)
+                .map(ClassroomMapper::toDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Classroom not found"));
     }
 
     public ClassroomResponseDTO changeCapacity(UUID id, ClassroomChangeCapacityRequest dto) {
-        Classroom classroom = findClassroom(id);
+        Classroom classroom = findActiveClassroomById(id);
         classroom.getSchoolYear().ensureActive();
         classroom.changeCapacity(dto.newCapacity());
         return ClassroomMapper.toDTO(classroom);
     }
 
-    public void deactivateClassroom(UUID id) {
-        Classroom classroom = findClassroom(id);
+    public void deactivate(UUID id) {
+        Classroom classroom = findActiveClassroomById(id);
         classroom.deactivate();
     }
 
-    private Classroom findClassroom(UUID id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Classroom not found"));
+    protected Classroom findActiveClassroomById(UUID id) {
+        Classroom classroom = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Classroom Not Found"));
+        classroom.ensureActive();
+        return classroom;
     }
 }

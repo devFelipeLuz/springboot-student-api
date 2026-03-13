@@ -66,12 +66,23 @@ public class Enrollment {
         return this.status == EnrollmentStatus.ACTIVE;
     }
 
+    public boolean isCancelled() {
+        return this.status == EnrollmentStatus.CANCELED
+                && canceledAt != null;
+    }
+
+    public boolean isFinished() {
+        return this.status == EnrollmentStatus.FINISHED
+                && canceledAt != null;
+    }
+
     public void finishEnrollment() {
         ensureActive();
         this.status = EnrollmentStatus.FINISHED;
+        this.canceledAt = Instant.now();
     }
 
-    public void cancel() {
+    public void cancelEnrollment() {
         ensureActive();
         this.classroom.decreaseActiveEnrollmentsCount();
         this.status = EnrollmentStatus.CANCELED;

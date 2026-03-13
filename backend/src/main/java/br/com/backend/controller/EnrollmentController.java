@@ -1,6 +1,6 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.EnrollmentRequestDTO;
+import br.com.backend.dto.request.EnrollmentRequest;
 import br.com.backend.dto.response.EnrollmentResponseDTO;
 import br.com.backend.service.EnrollmentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +28,7 @@ public class EnrollmentController {
     description = "Enrolls a student in a classroom for a given school year")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public EnrollmentResponseDTO register(@Valid @RequestBody EnrollmentRequestDTO dto) {
+    public EnrollmentResponseDTO register(@Valid @RequestBody EnrollmentRequest dto) {
         return service.enroll(dto);
     }
 
@@ -50,8 +50,14 @@ public class EnrollmentController {
 
     @Operation(summary = "Find enrollment by id")
     @GetMapping("/{id}")
-    public EnrollmentResponseDTO findById(@PathVariable UUID id) {
+    public EnrollmentResponseDTO getEnrollmentById(@PathVariable UUID id) {
         return service.findById(id);
+    }
+
+    @Operation(summary = "Finish enrollment")
+    @PatchMapping("/{id}")
+    public EnrollmentResponseDTO finishEnrollment(@PathVariable UUID id) {
+        return service.finishEnrollment(id);
     }
 
     @Operation(summary = "Cancel enrollment")

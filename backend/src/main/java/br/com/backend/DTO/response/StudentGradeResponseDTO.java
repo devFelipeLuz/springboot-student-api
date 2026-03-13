@@ -9,6 +9,7 @@ public record StudentGradeResponseDTO(
         UUID id,
         String studentName,
         Double grade,
+        Double maxScore,
         String title,
         AssessmentType type,
         Instant date,

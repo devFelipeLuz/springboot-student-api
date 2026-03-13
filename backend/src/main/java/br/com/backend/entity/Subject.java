@@ -1,5 +1,6 @@
 package br.com.backend.entity;
 
+import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +22,18 @@ public class Subject {
     private String name;
 
     public Subject(String name) {
+        this.name = validateName(name);
+    }
+
+    private String validateName(String name) {
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Subject name cannot be null or blank");
+            throw new BusinessException("Subject name cannot be null or blank");
         }
 
-        this.name = name;
+        return name;
+    }
+
+    public void updateName(String name) {
+        this.name = validateName(name);
     }
 }

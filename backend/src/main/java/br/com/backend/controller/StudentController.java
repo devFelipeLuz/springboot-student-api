@@ -1,6 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.StudentRequestDTO;
+import br.com.backend.dto.request.StudentCreateRequest;
+import br.com.backend.dto.request.StudentUpdateRequest;
 import br.com.backend.dto.response.StudentResponseDTO;
 import br.com.backend.service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +28,7 @@ public class StudentController {
     @Operation(summary = "Create student")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public StudentResponseDTO register(@Valid @RequestBody StudentRequestDTO dto) {
+    public StudentResponseDTO register(@Valid @RequestBody StudentCreateRequest dto) {
         return service.register(dto);
     }
 
@@ -54,16 +55,16 @@ public class StudentController {
     }
 
     @Operation(summary = "Update student")
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public StudentResponseDTO update(@PathVariable UUID id,
-                          @Valid @RequestBody StudentRequestDTO dto) {
+                                     @Valid @RequestBody StudentUpdateRequest dto) {
         return service.update(id, dto);
     }
 
     @Operation(summary = "Deactivate student")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
-        service.delete(id);
+    public void deactivateStudent(@PathVariable UUID id) {
+        service.deactivate(id);
     }
 }

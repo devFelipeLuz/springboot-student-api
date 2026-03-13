@@ -1,6 +1,6 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.SchoolYearRequestDTO;
+import br.com.backend.dto.request.SchoolYearRequest;
 import br.com.backend.dto.response.SchoolYearResponseDTO;
 import br.com.backend.entity.SchoolYear;
 import br.com.backend.exception.EntityNotFoundException;
@@ -23,10 +23,10 @@ public class SchooYearService {
         this.repository = repository;
     }
 
-    public SchoolYearResponseDTO register(SchoolYearRequestDTO dto) {
+    public SchoolYearResponseDTO register(SchoolYearRequest dto) {
         SchoolYear schoolYear = new SchoolYear(dto.year());
-        repository.save(schoolYear);
-        return SchoolYearMapper.toDTO(schoolYear);
+        SchoolYear saved = repository.save(schoolYear);
+        return SchoolYearMapper.toDTO(saved);
     }
 
     public Page<SchoolYearResponseDTO> findAll(Pageable pageable) {
@@ -40,19 +40,21 @@ public class SchooYearService {
                 .orElseThrow(() -> new EntityNotFoundException("SchoolYear not found"));
     }
 
-    public SchoolYearResponseDTO update(UUID id, SchoolYearRequestDTO dto) {
-        SchoolYear schoolYear = findSchoolYear(id);
+    public SchoolYearResponseDTO update(UUID id, SchoolYearRequest dto) {
+        SchoolYear schoolYear = findActiveSchoolYear(id);
         schoolYear.updateYear(dto.year());
         return SchoolYearMapper.toDTO(schoolYear);
     }
 
-    public void delete(UUID id) {
-        SchoolYear schoolYear = findSchoolYear(id);
+    public void deactivate(UUID id) {
+        SchoolYear schoolYear = findActiveSchoolYear(id);
         schoolYear.deactivate();
     }
 
-    private SchoolYear findSchoolYear(UUID id) {
-        return repository.findById(id)
+    protected SchoolYear findActiveSchoolYear(UUID id) {
+        SchoolYear schoolYear = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("SchoolYear not found"));
+        schoolYear.ensureActive();
+        return schoolYear;
     }
 }

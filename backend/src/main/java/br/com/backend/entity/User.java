@@ -42,24 +42,20 @@ public class User implements UserDetails {
     private Instant createdAt;
 
     public User(String email, String password, Role role) {
-        if (email == null || email.isEmpty()) {
-            throw new IllegalArgumentException("Email is null or blank");
-        }
-
-        if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("Password is null or blank");
-        }
-
-        if (role == null) {
-            throw new IllegalArgumentException("Role is null or blank");
-        }
-
-        this.email = email;
-        this.password = password;
-        this.role = role;
+        this.email = validateEmail(email);
+        this.password = validatePassword(password);
+        this.role = Objects.requireNonNull(role, "Role is null");
         this.enabled = true;
         this.deletedAt = null;
         this.createdAt = Instant.now();
+    }
+
+    public static User createUser(
+            String email,
+            String encodedPassword,
+            Role role) {
+
+        return new User(email, encodedPassword, role);
     }
 
     @Override
@@ -92,22 +88,16 @@ public class User implements UserDetails {
         return this.enabled && this.deletedAt == null;
     }
 
-    public static User createUser(
-            String email,
-            String encodedPassword,
-            Role role) {
-
-        return new User(email, encodedPassword, role);
-    }
-
     public void updateEmail(String email) {
         ensureActive();
-        this.email = email;
+        validateEmail(email);
+        this.email = validateEmail(email);
     }
 
     public void updatePassword(String password) {
         ensureActive();
-        this.password = password;
+        validatePassword(password);
+        this.password = validatePassword(password);
     }
 
     public void deactivate() {
@@ -117,7 +107,23 @@ public class User implements UserDetails {
 
     public void ensureActive() {
         if (!this.enabled) {
-            throw new BusinessException("Usuário desabilitado");
+            throw new BusinessException("User is not enabled");
         }
+    }
+
+    public String validateEmail(String email) {
+        if (email == null || email.isBlank()) {
+           throw new BusinessException("Email is null or blank");
+        }
+
+        return email;
+    }
+
+    public String validatePassword(String password) {
+        if (password == null || password.isBlank()) {
+            throw new BusinessException("Password is null or blank");
+        }
+
+        return password;
     }
 }

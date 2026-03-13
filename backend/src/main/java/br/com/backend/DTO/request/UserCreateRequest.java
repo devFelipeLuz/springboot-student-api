@@ -4,7 +4,7 @@ import br.com.backend.entity.enums.Role;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-public record UserCreateRequestDTO(
+public record UserCreateRequest(
         @NotNull @NotBlank(message = "Username is required")
         String email,
 

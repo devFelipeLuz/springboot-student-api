@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -33,31 +34,38 @@ public class Assessment {
     private Instant assessmentDate;
 
     public Assessment(TeachingAssignment teachingAssignment, String title, AssessmentType type) {
-        validateInput(teachingAssignment, title, type);
-        this.title = title;
-        this.type = type;
-        this.teachingAssignment = teachingAssignment;
+        this.title = validateTitle(title);
+        this.type = validateType(type);
+        this.teachingAssignment = Objects.requireNonNull(
+                teachingAssignment, "Teaching Assignment cannot be null");
         this.assessmentDate = Instant.now();
     }
 
-    public void updateData(TeachingAssignment teachingAssignment, String title, AssessmentType type) {
-        validateInput(teachingAssignment, title, type);
-        this.title = title;
-        this.type = type;
-        this.teachingAssignment = teachingAssignment;
+    public void updateTitle(String title) {
+        this.title = validateTitle(title);
     }
 
-    private void validateInput(TeachingAssignment teachingAssignment, String title, AssessmentType type) {
-        if (teachingAssignment == null) {
-            throw new BusinessException("TeachingAssignment cannot be null");
-        }
+    public void updateType(AssessmentType type) {
+        this.type = validateType(type);
+    }
 
+    private String validateTitle(String title) {
         if (title == null || title.isBlank()) {
-            throw new BusinessException("Title is null or blank");
+            throw new BusinessException("Name cannot be null or blank");
+        }
+        return title;
+    }
+
+    private AssessmentType validateType(AssessmentType type) {
+        if (type == null) {
+            throw new BusinessException("Type cannot be null");
         }
 
-        if (type == null) {
-            throw new BusinessException("Type is null or blank");
+        if (!type.equals(AssessmentType.TRABALHO) &&
+            !type.equals(AssessmentType.PROVA) &&
+            !type.equals(AssessmentType.LIÇÃO)) {
+            throw new BusinessException("Type must be TRABALHO, PROVA or LIÇÃO");
         }
+        return type;
     }
 }

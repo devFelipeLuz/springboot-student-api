@@ -1,7 +1,7 @@
 package br.com.backend.controller;
 
-import br.com.backend.dto.request.AttendanceCreateRequestDTO;
-import br.com.backend.dto.request.AttendanceRecordRequestDTO;
+import br.com.backend.dto.request.AttendanceCreateRequest;
+import br.com.backend.dto.request.AttendanceRecordRequest;
 import br.com.backend.dto.response.AttendanceSessionResponseDTO;
 import br.com.backend.service.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,36 +25,37 @@ public class AttendanceController {
         this.service = service;
     }
 
-    @Operation(summary = "Registra Attendance")
+    @Operation(summary = "Create attendance")
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public AttendanceSessionResponseDTO register(@Valid @RequestBody AttendanceCreateRequestDTO dto) {
+    public AttendanceSessionResponseDTO register(@Valid @RequestBody AttendanceCreateRequest dto) {
         return service.register(dto);
     }
 
-    @Operation(summary = "Busca Attendances e retorna em páginas")
+    @Operation(summary = "List attendances")
     @GetMapping
     public Page<AttendanceSessionResponseDTO> getAttendances(
-            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
+            @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
         return service.findAll(pageable);
     }
 
-    @Operation(summary = "Busca Attendance por ID")
+    @Operation(summary = "Find attendance by id")
     @GetMapping("/{id}")
-    public AttendanceSessionResponseDTO findById(@PathVariable UUID id) {
+    public AttendanceSessionResponseDTO getAttendanceById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
-    @Operation(summary = "Atualiza Attendance encontrado por ID")
+    @Operation(summary = "Update attendance")
     @PatchMapping("/{sessionId}/records/{recordId}")
     public AttendanceSessionResponseDTO update(@PathVariable UUID sessionId,
                                                @PathVariable UUID recordId,
-                                               @Valid @RequestBody AttendanceRecordRequestDTO sessionDto) {
+                                               @Valid @RequestBody AttendanceRecordRequest recordDto) {
 
-        return service.update(sessionId, recordId, sessionDto);
+        return service.update(sessionId, recordId, recordDto);
     }
 
-    @Operation(summary = "Deleta Attendance encontrado por ID")
+    @Operation(summary = "Delete attendance")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void delete(@PathVariable UUID id) {

@@ -1,13 +1,14 @@
 package br.com.backend.service;
 
-import br.com.backend.dto.request.ProfessorRequestDTO;
+import br.com.backend.dto.request.ProfessorCreateRequest;
+import br.com.backend.dto.request.ProfessorUpdateRequest;
 import br.com.backend.dto.response.ProfessorResponseDTO;
 import br.com.backend.entity.Professor;
 import br.com.backend.entity.User;
+import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.ProfessorMapper;
 import br.com.backend.repository.ProfessorRepository;
-import br.com.backend.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,20 +21,20 @@ import java.util.UUID;
 public class ProfessorService {
 
     private final ProfessorRepository repository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
-    public ProfessorService(ProfessorRepository repository, UserRepository userRepository) {
+    public ProfessorService(ProfessorRepository repository, UserService userService) {
         this.repository = repository;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
-    public ProfessorResponseDTO register(ProfessorRequestDTO dto) {
-        User user = userRepository.findById(dto.userId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    public ProfessorResponseDTO register(ProfessorCreateRequest dto) {
+        User user = userService.createUser(dto.email(), dto.password(), Role.PROFESSOR);
 
         Professor professor = new Professor(dto.name(), user);
-        repository.save(professor);
-        return ProfessorMapper.toDTO(professor);
+        Professor saved = repository.save(professor);
+
+        return ProfessorMapper.toDTO(saved);
     }
 
     public Page<ProfessorResponseDTO> findAll(Pageable pageable) {
@@ -47,19 +48,33 @@ public class ProfessorService {
                 .orElseThrow(() -> new EntityNotFoundException("Professor not found"));
     }
 
-    public ProfessorResponseDTO update(UUID id, ProfessorRequestDTO dto) {
-        Professor professor = findProfessor(id);
-        professor.updateName(dto.name());
+    public ProfessorResponseDTO update(UUID id, ProfessorUpdateRequest dto) {
+        Professor professor = findActiveProfessorById(id);
+
+        if (dto.name() != null) {
+            professor.updateName(dto.name());
+        }
+
+        if (dto.email() != null) {
+            userService.changeEmail(professor.getUser().getId(), dto.email());
+        }
+
+        if (dto.password() != null) {
+            userService.changePassword(professor.getUser().getId(), dto.password());
+        }
+
         return ProfessorMapper.toDTO(professor);
     }
 
-    public void delete(UUID id) {
-        Professor professor = findProfessor(id);
+    public void deactivate(UUID id) {
+        Professor professor = findActiveProfessorById(id);
         professor.deactivate();
     }
 
-    private Professor findProfessor(UUID professorId) {
-        return repository.findById(professorId)
+    protected Professor findActiveProfessorById(UUID professorId) {
+        Professor professor = repository.findById(professorId)
                 .orElseThrow(() -> new EntityNotFoundException("Professor not found"));
+        professor.ensureActive();
+        return professor;
     }
 }

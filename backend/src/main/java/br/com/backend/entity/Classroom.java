@@ -58,21 +58,10 @@ public class Classroom {
         this.active = true;
     }
 
-    private void ensureCapacity() {
+    public void ensureCapacity() {
         if (activeEnrollmentsCount >= maxCapacity) {
             throw new BusinessException("Classroom is full");
         }
-    }
-
-    private void ensureSchoolYearIsActive() {
-        if (!schoolYear.isActive()) {
-            throw new BusinessException("School year is not active");
-        }
-    }
-
-    public void ensureCanEnroll() {
-        ensureCapacity();
-        ensureSchoolYearIsActive();
     }
 
     public void changeCapacity(int newCapacity) {
@@ -114,5 +103,11 @@ public class Classroom {
 
     public void deactivate() {
         this.active = false;
+    }
+
+    public void ensureActive() {
+        if (!this.active) {
+            throw new BusinessException("Classroom is not active");
+        }
     }
 }
