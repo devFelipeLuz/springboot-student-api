@@ -20,6 +20,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -65,8 +66,9 @@ public class AttendanceServiceTest {
 
         assignment = TeachingAssignmentBuilder.builder().build();
         enrollment = EnrollmentBuilder.builder().build();
-        session = AttendanceSessionBuilder.builder().build();
-
+        session = AttendanceSessionBuilder.builder()
+                .withAssignment(assignment)
+                .build();
     }
 
     @Test
@@ -96,7 +98,8 @@ public class AttendanceServiceTest {
                 .withEnrollment(enrollment)
                 .build();
 
-        UUID recordId = record.getId();
+        UUID recordId = UUID.randomUUID();
+        ReflectionTestUtils.setField(record, "id", recordId);
 
         session.getRecords().add(record);
 
@@ -149,14 +152,15 @@ public class AttendanceServiceTest {
         AttendanceRecord record = AttendanceRecordBuilder.builder()
                 .withSession(session)
                 .withEnrollment(enrollment)
-                .withStatus(null)
                 .build();
 
-        UUID recordId = record.getId();
+        UUID recordId = UUID.randomUUID();
+        ReflectionTestUtils.setField(record, "id", recordId);
+
         session.getRecords().add(record);
 
         AttendanceRecordRequest recordRequest =
-                new AttendanceRecordRequest(enrollmentId, AttendanceStatus.ABSENT);
+                new AttendanceRecordRequest(enrollmentId, null);
 
         when(repository.findById(sessionId))
                 .thenReturn(Optional.of(session));

@@ -1,9 +1,6 @@
 package br.com.backend.service;
 
-import br.com.backend.builders.ClassroomBuilder;
-import br.com.backend.builders.SchoolYearBuilder;
-import br.com.backend.builders.StudentBuilder;
-import br.com.backend.builders.UserBuilder;
+import br.com.backend.builders.*;
 import br.com.backend.dto.request.EnrollmentRequest;
 import br.com.backend.entity.*;
 import br.com.backend.entity.enums.Role;
@@ -16,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -42,15 +40,18 @@ public class EnrollmentServiceTest {
     @InjectMocks
     private EnrollmentService service;
 
-    private UUID studentId;
-    private UUID schoolYearId;
-    private UUID classroomId;
 
     private Student student;
     private SchoolYear schoolYear;
     private Classroom classroom;
+    private Enrollment enrollment;
 
     private EnrollmentRequest request;
+
+    private UUID studentId;
+    private UUID schoolYearId;
+    private UUID classroomId;
+    private UUID enrollmentId;
 
 
     @BeforeEach
@@ -58,10 +59,17 @@ public class EnrollmentServiceTest {
         studentId = UUID.randomUUID();
         schoolYearId = UUID.randomUUID();
         classroomId = UUID.randomUUID();
+        enrollmentId = UUID.randomUUID();
 
         student = StudentBuilder.builder().build();
         schoolYear = SchoolYearBuilder.builder().build();
         classroom = ClassroomBuilder.builder().build();
+        enrollment = EnrollmentBuilder.builder()
+                .withStudent(student)
+                .withSchoolYear(schoolYear)
+                .withClassroom(classroom)
+                .withId(enrollmentId)
+                .build();
 
         request = new EnrollmentRequest(studentId, schoolYearId, classroomId);
     }
@@ -93,11 +101,12 @@ public class EnrollmentServiceTest {
 
     @Test
     void shouldCancelEnrollment() {
-        Enrollment enrollment = new Enrollment(student, schoolYear, classroom);
+        when(repository.findById(enrollmentId))
+                .thenReturn(Optional.of(enrollment));
 
-        when(repository.findById(enrollment.getId())).thenReturn(Optional.of(enrollment));
+        enrollment.register();
 
-        service.cancel(enrollment.getId());
+        service.cancel(enrollmentId);
 
         assertTrue(enrollment.isCancelled());
     }
@@ -124,10 +133,10 @@ public class EnrollmentServiceTest {
 
     @Test
     void shouldThrowExceptionWhenStudentIsInactive() {
-        when(studentService.findActiveStudentById(studentId))
-                .thenThrow(new BusinessException("Student is inactive"));
+        when(repository.findById(enrollmentId)).thenReturn(Optional.of(enrollment));
+        enrollment.getStudent().deactivate();
 
-        assertThrows(BusinessException.class, ()-> service.cancel(studentId));
+        assertThrows(BusinessException.class, ()-> service.cancel(enrollmentId));
     }
 
     @Test

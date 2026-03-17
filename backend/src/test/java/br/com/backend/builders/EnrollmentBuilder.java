@@ -4,12 +4,16 @@ import br.com.backend.entity.Classroom;
 import br.com.backend.entity.Enrollment;
 import br.com.backend.entity.SchoolYear;
 import br.com.backend.entity.Student;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.UUID;
 
 public class EnrollmentBuilder {
 
     private Student student = StudentBuilder.builder().build();
     private Classroom classroom = ClassroomBuilder.builder().build();
     private SchoolYear schoolYear = SchoolYearBuilder.builder().build();
+    private UUID id = UUID.randomUUID();
 
     public static EnrollmentBuilder builder() {
         return new EnrollmentBuilder();
@@ -30,7 +34,14 @@ public class EnrollmentBuilder {
         return this;
     }
 
+    public EnrollmentBuilder withId(UUID id) {
+        this.id = id;
+        return this;
+    }
+
     public Enrollment build() {
-        return new Enrollment(student, schoolYear, classroom);
+        Enrollment enrollment =  new Enrollment(student, schoolYear, classroom);
+        ReflectionTestUtils.setField(enrollment, "id", UUID.randomUUID());
+        return enrollment;
     }
 }

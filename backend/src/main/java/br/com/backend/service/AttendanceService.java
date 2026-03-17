@@ -69,6 +69,7 @@ public class AttendanceService {
             AttendanceRecordRequest recordDto) {
 
         AttendanceSession session = findAttendanceSessionById(sessionId);
+
         session.updateAttendance(recordId, recordDto.status());
         return AttendanceMapper.toDTO(session);
     }

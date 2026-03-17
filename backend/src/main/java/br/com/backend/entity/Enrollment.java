@@ -66,13 +66,13 @@ public class Enrollment {
     }
 
     public void finishEnrollment() {
-        ensureActive();
+        ensureAllActive();
         this.status = EnrollmentStatus.FINISHED;
         this.canceledAt = Instant.now();
     }
 
     public void cancelEnrollment() {
-        ensureActive();
+        ensureAllActive();
         this.classroom.decreaseActiveEnrollmentsCount();
         this.status = EnrollmentStatus.CANCELED;
         this.canceledAt = Instant.now();
@@ -82,6 +82,31 @@ public class Enrollment {
         if (!this.isActive()) {
             throw new BusinessException("Esta matrícula não está ativa");
         }
+    }
+
+    public void ensureStudentActive() {
+        if (!this.student.isActive()) {
+            throw new BusinessException("Student is already inactive");
+        }
+    }
+
+    public void ensureSchoolYearActive() {
+        if (!this.schoolYear.isActive()) {
+            throw new BusinessException("School year is already inactive");
+        }
+    }
+
+    public void ensureClassroomActive() {
+        if (!this.classroom.isActive()) {
+            throw new BusinessException("Classroom is already inactive");
+        }
+    }
+
+    public void ensureAllActive() {
+        ensureActive();
+        ensureStudentActive();
+        ensureSchoolYearActive();
+        ensureClassroomActive();
     }
 
     public void register() {

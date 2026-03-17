@@ -53,15 +53,19 @@ public class AssessmentServiceTest {
         createRequest = new AssessmentCreateRequest("Prova de história", AssessmentType.PROVA, assignmentId);
 
         classroom = ClassroomBuilder.builder().build();
-        assignment = TeachingAssignmentBuilder.builder().build();
+        assignment = TeachingAssignmentBuilder.builder()
+                .withClassroom(classroom)
+                .build();
         assessment = AssessmentBuilder.builder().build();
     }
 
     @Test
     void shouldRegisterAssessment() {
-        when(teachingAssignmentService.findAssignmentById(createRequest.teachingAssignmentId())).thenReturn(assignment);
+        when(teachingAssignmentService.findAssignmentById(createRequest.teachingAssignmentId()))
+                .thenReturn(assignment);
 
-        when(repository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(repository.save(any()))
+                .thenAnswer(i -> i.getArgument(0));
 
         service.register(createRequest);
 
