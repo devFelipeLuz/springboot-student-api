@@ -1,4 +1,4 @@
-package br.com.backend;
+package br.com.backend.integration;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;

@@ -1,4 +1,4 @@
-package br.com.backend;
+package br.com.backend.integration;
 
 import br.com.backend.builders.UserBuilder;
 import br.com.backend.dto.request.*;
@@ -7,7 +7,6 @@ import br.com.backend.entity.enums.Role;
 import br.com.backend.repository.PasswordResetTokenRepository;
 import br.com.backend.repository.RefreshTokenRepository;
 import br.com.backend.repository.UserRepository;
-import br.com.backend.security.PasswordResetToken;
 import br.com.backend.service.FakeEmailService;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.AfterEach;
@@ -21,8 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
-
-import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

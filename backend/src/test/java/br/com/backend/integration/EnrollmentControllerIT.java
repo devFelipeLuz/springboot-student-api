@@ -1,4 +1,4 @@
-package br.com.backend;
+package br.com.backend.integration;
 
 import br.com.backend.builders.EnrollmentRequestBuilder;
 import br.com.backend.dto.request.ClassroomCreateRequest;

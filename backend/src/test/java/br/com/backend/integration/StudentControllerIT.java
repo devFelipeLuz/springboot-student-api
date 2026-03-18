@@ -1,4 +1,4 @@
-package br.com.backend;
+package br.com.backend.integration;
 
 import br.com.backend.builders.StudentCreateRequestBuilder;
 import br.com.backend.builders.StudentUpdateRequestBuilder;
