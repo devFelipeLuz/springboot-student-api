@@ -84,15 +84,6 @@ public class AuthControllerIT extends AbstractInegrationTest {
         userRepository.save(user);
     }
 
-
-    @AfterEach
-    @Transactional
-    public void deleteUser() throws  Exception{
-        refreshTokenRepository.deleteAllByUserId(user.getId());
-        passwordResetTokenRepository.deleteAllByUserId(user.getId());
-        userRepository.deleteById(user.getId());
-    }
-
     @Test
     void shouldLoginSuccessfully() throws Exception {
         AuthRequest request = new AuthRequest(email, password);

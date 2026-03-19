@@ -3,11 +3,13 @@ package br.com.backend.service;
 import br.com.backend.exception.BusinessException;
 import lombok.Getter;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Getter
 @Component
 @Primary
+@Profile("test")
 public class FakeEmailService implements EmailService {
 
     private String lastToken;

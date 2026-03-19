@@ -51,7 +51,7 @@ public class SchoolYearService {
         schoolYear.deactivate();
     }
 
-    protected SchoolYear findActiveSchoolYear(UUID id) {
+    public SchoolYear findActiveSchoolYear(UUID id) {
         SchoolYear schoolYear = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("SchoolYear not found"));
         schoolYear.ensureActive();

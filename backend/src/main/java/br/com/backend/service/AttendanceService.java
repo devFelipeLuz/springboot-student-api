@@ -79,7 +79,7 @@ public class AttendanceService {
         repository.delete(session);
     }
 
-    protected AttendanceSession findAttendanceSessionById(UUID id) {
+    public AttendanceSession findAttendanceSessionById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Attendance session Not Found"));
     }

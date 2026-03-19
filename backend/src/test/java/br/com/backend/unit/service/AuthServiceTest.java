@@ -6,6 +6,8 @@ import br.com.backend.dto.response.AuthResponse;
 import br.com.backend.entity.User;
 import br.com.backend.security.JwtService;
 import br.com.backend.security.RefreshToken;
+import br.com.backend.service.AuthService;
+import br.com.backend.service.RefreshTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

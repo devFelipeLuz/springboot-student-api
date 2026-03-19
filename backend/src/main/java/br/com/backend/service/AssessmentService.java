@@ -71,7 +71,7 @@ public class AssessmentService {
         repository.delete(assessment);
     }
 
-    protected Assessment findAssessmentById(UUID assessmentId) {
+    public Assessment findAssessmentById(UUID assessmentId) {
         return repository.findById(assessmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
     }

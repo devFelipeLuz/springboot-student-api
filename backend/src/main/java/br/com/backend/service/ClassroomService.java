@@ -59,7 +59,7 @@ public class ClassroomService {
         classroom.deactivate();
     }
 
-    protected Classroom findActiveClassroomById(UUID id) {
+    public Classroom findActiveClassroomById(UUID id) {
         Classroom classroom = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Classroom Not Found"));
         classroom.ensureActive();

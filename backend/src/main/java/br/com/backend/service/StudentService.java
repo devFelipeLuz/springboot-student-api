@@ -79,7 +79,7 @@ public class StudentService {
         student.deactivate();
     }
 
-    protected Student findActiveStudentById(UUID id) {
+    public Student findActiveStudentById(UUID id) {
         Student student = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Aluno não encontrado"));
         student.ensureActive();

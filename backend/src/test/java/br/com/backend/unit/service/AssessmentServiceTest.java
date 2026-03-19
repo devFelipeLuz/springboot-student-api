@@ -9,6 +9,8 @@ import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.AssessmentRepository;
+import br.com.backend.service.AssessmentService;
+import br.com.backend.service.TeachingAssignmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

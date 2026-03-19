@@ -38,7 +38,7 @@ public class UserService {
     }
 
     //Usado por services internos
-    protected User registerUser(String email, String password, Role role) {
+    public User registerUser(String email, String password, Role role) {
         String encodedPassword = encoder.encode(password);
         User user = User.createUser(email, encodedPassword, role);
         return repository.save(user);
@@ -76,14 +76,14 @@ public class UserService {
     }
 
     //Usado por services internos
-    protected User changeEmail(UUID id, String email) {
+    public User changeEmail(UUID id, String email) {
         User user = findActiveUserById(id);
         user.updateEmail(email);
         return user;
     }
 
     //Usado por services internos
-    protected User changePassword(UUID id, String password) {
+    public User changePassword(UUID id, String password) {
         User user = findActiveUserById(id);
         user.updatePassword(encoder.encode(password));
         return user;

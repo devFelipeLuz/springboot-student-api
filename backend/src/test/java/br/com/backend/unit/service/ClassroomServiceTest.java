@@ -9,6 +9,8 @@ import br.com.backend.entity.SchoolYear;
 import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.repository.ClassroomRepository;
+import br.com.backend.service.ClassroomService;
+import br.com.backend.service.SchoolYearService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

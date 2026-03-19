@@ -76,7 +76,7 @@ public class EnrollmentService {
         return  EnrollmentMapper.toDTO(enrollment);
     }
 
-    protected Enrollment findActiveEnrollmentById(UUID id) {
+    public Enrollment findActiveEnrollmentById(UUID id) {
         Enrollment enrollment = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Matrícula não encontrada"));
         enrollment.ensureActive();

@@ -68,7 +68,7 @@ public class TeachingAssignmentService {
         repository.delete(assignment);
     }
 
-    protected TeachingAssignment findAssignmentById(UUID id) {
+    public TeachingAssignment findAssignmentById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("TeachingAssignment not found"));
     }
