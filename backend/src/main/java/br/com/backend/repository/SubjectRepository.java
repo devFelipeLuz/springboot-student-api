@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface SubjectRepository extends JpaRepository<Subject, UUID> {
     Page<Subject> findAll(Pageable pageable);
 
+    Page<Subject> findByActive(Boolean active, Pageable pageable);
+
     boolean existsByName(String name);
 }

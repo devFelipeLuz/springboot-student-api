@@ -34,15 +34,20 @@ public class SubjectService {
         return SubjectMapper.toDTO(saved);
     }
 
-    public Page<SubjectResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(SubjectMapper::toDTO);
-    }
-
     public SubjectResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(SubjectMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Subject not found"));
+    }
+
+    public Page<SubjectResponseDTO> findAll(Boolean active, Pageable pageable) {
+        if (active == null) {
+            return repository.findAll(pageable)
+                    .map(SubjectMapper::toDTO);
+        }
+
+        return repository.findByActive(active, pageable)
+                .map(SubjectMapper::toDTO);
     }
 
     public SubjectResponseDTO updateName(UUID id, SubjectRequest dto) {

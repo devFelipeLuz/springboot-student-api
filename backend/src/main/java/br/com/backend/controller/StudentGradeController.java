@@ -29,7 +29,7 @@ public class StudentGradeController {
     @Operation(summary = "Create grade")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
     public StudentGradeResponseDTO registerGrade(@Valid @RequestBody StudentGradeCreateRequest dto) {
         return service.register(dto);
     }
@@ -47,14 +47,14 @@ public class StudentGradeController {
 
     @Operation(summary = "Find grade by id")
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR', 'STUDENT')")
     public StudentGradeResponseDTO findGradeById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
     @Operation(summary = "List grades")
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN', 'PROFESSOR')")
     public Page<StudentGradeResponseDTO> getGrades(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
@@ -64,8 +64,8 @@ public class StudentGradeController {
     @Operation(summary = "Update grade")
     @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public StudentGradeResponseDTO updateGrade(@PathVariable UUID id,
-                                          @Valid @RequestBody StudentGradeUpdateRequest dto) {
+    public StudentGradeResponseDTO updateGrade(
+            @PathVariable UUID id, @Valid @RequestBody StudentGradeUpdateRequest dto) {
         return service.update(id, dto);
     }
 
