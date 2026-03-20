@@ -50,7 +50,7 @@ public class StudentController {
             @RequestParam(required = false)
             Boolean active,
 
-            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.ASC)
+            @PageableDefault(size = 10, sort = "name", direction = Sort.Direction.DESC)
             Pageable pageable) {
 
         return service.findAll(active, pageable);

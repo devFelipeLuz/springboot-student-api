@@ -18,13 +18,13 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "student_name")
+    @Column(nullable = false)
     private String name;
 
     @OneToMany(mappedBy = "student")
     private List<Enrollment> enrollments;
 
-    @Column(name = "active")
+    @Column(name = "active", nullable = false)
     private boolean active;
 
     @OneToOne(fetch = FetchType.LAZY)
