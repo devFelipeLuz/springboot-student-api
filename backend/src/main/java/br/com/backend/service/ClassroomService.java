@@ -36,8 +36,13 @@ public class ClassroomService {
         return ClassroomMapper.toDTO(saved);
     }
 
-    public Page<ClassroomResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
+    public Page<ClassroomResponseDTO> findAll(Boolean active, Pageable pageable) {
+        if (active == null) {
+            return repository.findAll(pageable)
+                    .map(ClassroomMapper::toDTO);
+        }
+
+        return repository.findByActive(active, pageable)
                 .map(ClassroomMapper::toDTO);
     }
 
