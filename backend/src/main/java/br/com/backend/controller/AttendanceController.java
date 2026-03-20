@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -28,12 +29,14 @@ public class AttendanceController {
     @Operation(summary = "Create attendance")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public AttendanceSessionResponseDTO register(@Valid @RequestBody AttendanceCreateRequest dto) {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public AttendanceSessionResponseDTO registerAttendance(@Valid @RequestBody AttendanceCreateRequest dto) {
         return service.register(dto);
     }
 
     @Operation(summary = "List attendances")
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<AttendanceSessionResponseDTO> getAttendances(
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
@@ -42,15 +45,18 @@ public class AttendanceController {
 
     @Operation(summary = "Find attendance by id")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public AttendanceSessionResponseDTO getAttendanceById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
     @Operation(summary = "Update attendance")
     @PatchMapping("/{sessionId}/records/{recordId}")
-    public AttendanceSessionResponseDTO update(@PathVariable UUID sessionId,
-                                               @PathVariable UUID recordId,
-                                               @Valid @RequestBody AttendanceRecordRequest recordDto) {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public AttendanceSessionResponseDTO updateAttendance(
+            @PathVariable UUID sessionId,
+            @PathVariable UUID recordId,
+            @Valid @RequestBody AttendanceRecordRequest recordDto) {
 
         return service.update(sessionId, recordId, recordDto);
     }
@@ -58,7 +64,8 @@ public class AttendanceController {
     @Operation(summary = "Delete attendance")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
+    public void deleteAttendance(@PathVariable UUID id) {
         service.delete(id);
     }
 }
