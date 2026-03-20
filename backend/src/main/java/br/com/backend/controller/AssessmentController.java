@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -28,12 +29,14 @@ public class AssessmentController {
     @Operation(summary = "Create assessment")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public AssessmentResponseDTO register(@Valid @RequestBody AssessmentCreateRequest dto) {
         return service.register(dto);
     }
 
     @Operation(summary = "List assessments")
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<AssessmentResponseDTO> getAssessments(
             @PageableDefault(size = 10, sort = "assessmentDate", direction = Sort.Direction.ASC)
             Pageable pageable) {
@@ -42,12 +45,14 @@ public class AssessmentController {
 
     @Operation(summary = "Find assessment by id")
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public AssessmentResponseDTO getAssessmentById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
     @Operation(summary = "Update assessment")
     @PatchMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public AssessmentResponseDTO updateAssessment(@PathVariable UUID id,
                                                   @Valid @RequestBody AssessmentUpdateRequest dto) {
         return service.update(id, dto);
@@ -56,6 +61,7 @@ public class AssessmentController {
     @Operation(summary = "Delete assessment")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public void delete(@PathVariable UUID id) {
         service.delete(id);
     }

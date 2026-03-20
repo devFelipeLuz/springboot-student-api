@@ -31,21 +31,21 @@ public class StudentController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     @PreAuthorize("hasAuthority('ADMIN')")
-    public StudentResponseDTO register(@Valid @RequestBody StudentCreateRequest dto) {
+    public StudentResponseDTO registerStudent(@Valid @RequestBody StudentCreateRequest dto) {
         return service.register(dto);
     }
 
     @Operation(summary = "Find student by id")
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
-    public StudentResponseDTO findById(@PathVariable UUID id) {
+    public StudentResponseDTO getStudentById(@PathVariable UUID id) {
         return service.findById(id);
     }
 
     @Operation(summary = "List students")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
-    public Page<StudentResponseDTO> findAll(
+    public Page<StudentResponseDTO> getStudents(
             @Parameter(description = "Filter by active status (true or false)")
             @RequestParam(required = false)
             Boolean active,
@@ -59,7 +59,7 @@ public class StudentController {
     @Operation(summary = "Update student")
     @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN') or #id == authentication.principal.id")
-    public StudentResponseDTO update(@PathVariable UUID id,
+    public StudentResponseDTO updateStudent(@PathVariable UUID id,
                                      @Valid @RequestBody StudentUpdateRequest dto) {
         return service.update(id, dto);
     }
@@ -67,6 +67,7 @@ public class StudentController {
     @Operation(summary = "Deactivate student")
     @ResponseStatus(HttpStatus.OK)
     @PatchMapping("/{id}/deactivate")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public void deactivateStudent(@PathVariable UUID id) {
         service.deactivate(id);
     }
