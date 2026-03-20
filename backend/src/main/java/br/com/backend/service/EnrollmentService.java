@@ -48,20 +48,20 @@ public class EnrollmentService {
         return EnrollmentMapper.toDTO(saved);
     }
 
-    public Page<EnrollmentResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(EnrollmentMapper::toDTO);
-    }
-
-    public Page<EnrollmentResponseDTO> findAllActive(Pageable pageable) {
-        return repository.findByStatus(EnrollmentStatus.ACTIVE, pageable)
-                .map(EnrollmentMapper::toDTO);
-    }
-
     public EnrollmentResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(EnrollmentMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
+    }
+
+    public Page<EnrollmentResponseDTO> findAll(EnrollmentStatus status, Pageable pageable) {
+        if (status == null) {
+            return repository.findAll(pageable)
+                    .map(EnrollmentMapper::toDTO);
+        }
+
+        return repository.findByStatus(status, pageable)
+                .map(EnrollmentMapper::toDTO);
     }
 
     public EnrollmentResponseDTO finishEnrollment(UUID id) {
