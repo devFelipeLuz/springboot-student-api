@@ -25,7 +25,7 @@ public class AuthController {
     }
 
     @Operation(
-            summary = "Realiza login do usuário",
+            summary = "Login user",
             description = "Retorna access token e refresh token"
     )
     @PostMapping("/login")
@@ -33,27 +33,27 @@ public class AuthController {
         return authService.login(request);
     }
 
-    @Operation(summary = "Realiza requisição de refresh token")
+    @Operation(summary = "Request refresh token")
     @PostMapping("/refresh")
     public AuthResponse refresh(@RequestBody RefreshRequest request) {
         return authService.refresh(request.refreshToken());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Realiza logout do usuário")
+    @Operation(summary = "Logout user")
     @PostMapping("/logout")
     public void logout(@RequestBody RefreshRequest request) {
         authService.logout(request.refreshToken());
     }
 
-    @Operation(summary = "Realiza requisição de reset de senha")
+    @Operation(summary = "Request reset password")
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody ForgotPasswordRequest request) {
         passwordResetService.requestPasswordReset(request.email());
         return ResponseEntity.ok("If the account exists, you will receive an email");
     }
 
-    @Operation(summary = "Realiza reset de senha")
+    @Operation(summary = "Reset password")
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordRequest request) {
         passwordResetService.resetPassword(request.token(), request.newPassword());
