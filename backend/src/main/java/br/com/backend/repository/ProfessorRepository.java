@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface ProfessorRepository extends JpaRepository<Professor, UUID> {
     Page<Professor> findAll(Pageable pageable);
+
+    Page<Professor> findByActive(Boolean active, Pageable pageable);
 }

@@ -37,15 +37,20 @@ public class ProfessorService {
         return ProfessorMapper.toDTO(saved);
     }
 
-    public Page<ProfessorResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(ProfessorMapper::toDTO);
-    }
-
     public ProfessorResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(ProfessorMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Professor not found"));
+    }
+
+    public Page<ProfessorResponseDTO> findAll(Boolean active, Pageable pageable) {
+        if (active == null) {
+            return repository.findAll(pageable)
+                    .map(ProfessorMapper::toDTO);
+        }
+
+        return repository.findByActive(active, pageable)
+                .map(ProfessorMapper::toDTO);
     }
 
     public ProfessorResponseDTO update(UUID id, ProfessorUpdateRequest dto) {
