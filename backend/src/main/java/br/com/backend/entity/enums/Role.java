@@ -7,6 +7,6 @@ public enum Role {
     CORDINATOR;
 
     public String getAuthority() {
-        return "ROLE_" + this.name();
+        return this.name();
     }
 }

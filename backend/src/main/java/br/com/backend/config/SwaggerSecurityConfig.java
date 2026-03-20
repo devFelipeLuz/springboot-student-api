@@ -21,7 +21,7 @@ public class SwaggerSecurityConfig {
                                                 .type(SecurityScheme.Type.HTTP)
                                                 .scheme("bearer")
                                                 .bearerFormat("JWT")
-                                                .description("Insira o token no formato: Bearer {token}")
+                                                .description("Insira apenas o token JWT")
                                 )
                 )
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"));

@@ -42,18 +42,20 @@ public class StudentService {
         return StudentMapper.toDTO(saved);
     }
 
-    public Page<StudentResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable).map(StudentMapper::toDTO);
-    }
-
-    public Page<StudentResponseDTO> findAllActive(Pageable pageable) {
-        return repository.findByActiveTrue(pageable).map(StudentMapper::toDTO);
-    }
-
     public StudentResponseDTO findById(UUID id) {
         return repository.findById(id)
                 .map(StudentMapper::toDTO)
                 .orElseThrow(() -> new EntityNotFoundException("Student not found"));
+    }
+
+    public Page<StudentResponseDTO> findAll(Boolean active, Pageable pageable) {
+        if (active == null) {
+            return repository.findAll(pageable)
+                    .map(StudentMapper::toDTO);
+        }
+
+        return repository.findByActive(active, pageable)
+                .map(StudentMapper::toDTO);
     }
 
     public StudentResponseDTO update(UUID id, StudentUpdateRequest dto) {

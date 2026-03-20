@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, UUID> {
-    Page<Student> findByActiveTrue(Pageable pageable);
+    Page<Student> findByActive(Boolean active, Pageable pageable);
 
     Page<Student> findAll(Pageable pageable);
 }

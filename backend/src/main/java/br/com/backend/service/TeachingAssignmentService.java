@@ -40,6 +40,7 @@ public class TeachingAssignmentService {
     public TeachingAssignmentResponseDTO register(TeachingAssignmentRequest dto) {
         if (repository.existsByProfessorIdAndSubjectIdAndClassroomId(
                 dto.professorId(), dto.subjectId(), dto.classroomId())) {
+
             throw new BusinessException("Teaching Assignment already exists");
         }
 
@@ -49,6 +50,7 @@ public class TeachingAssignmentService {
 
         TeachingAssignment assignment = new TeachingAssignment(professor, subject, classroom);
         TeachingAssignment saved = repository.save(assignment);
+
         return TeachingAssignmentMapper.toDTO(saved);
     }
 
