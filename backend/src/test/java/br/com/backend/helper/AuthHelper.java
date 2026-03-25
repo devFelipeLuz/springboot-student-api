@@ -28,11 +28,11 @@ public class AuthHelper {
                 .extract();
     }
 
-    protected String getAccessToken(String email, String password) {
+    public String getAccessToken(String email, String password) {
         return getResponse(email, password).path("accessToken");
     }
 
-    protected String getRefreshToken(String email, String password) {
+    public String getRefreshToken(String email, String password) {
         return getResponse(email, password).path("refreshToken");
     }
 

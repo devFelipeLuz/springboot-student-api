@@ -1,9 +1,8 @@
 package br.com.backend.helper;
 
+import br.com.backend.builders.dto.StudentCreateRequestBuilder;
 import br.com.backend.dto.request.StudentCreateRequest;
 import io.restassured.http.ContentType;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
 
@@ -15,36 +14,30 @@ import static io.restassured.RestAssured.given;
 public class StudentHelper {
 
     @Autowired
-    private AuthHelper helper;
+    private AuthHelper auth;
 
-    private String getAdminToken() {
-        return helper.getAdminAccessToken();
-    }
+    public StudentData createStudent() {
+        String name = "Aluno " + UUID.randomUUID();
+        String email = "email." + UUID.randomUUID() + "@school.com";
+        String password = "student";
 
-    public ExtractableResponse<Response> createStudentAndReturn(
-            String name, String email, String password) {
+        StudentCreateRequest request = StudentCreateRequestBuilder.builder()
+                .withName(name)
+                .withEmail(email)
+                .withPassword(password)
+                .build();
 
-        StudentCreateRequest request =
-                new StudentCreateRequest(name, email, password);
-
-        return given()
-                .header("Authorization", "Bearer " + getAdminToken())
+        String id = given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
         .when()
                 .post("/students")
         .then()
                 .statusCode(201)
-                .extract();
-    }
+                .extract()
+                .path("id");
 
-    public UUID getStudentId(ExtractableResponse<Response> response) {
-        String id = response.path("id");
-
-        return UUID.fromString(id);
-    }
-
-    public String getStudentToken(String email, String password) {
-        return helper.getAccessToken(email, password);
+        return new StudentData(UUID.fromString(id), name, email, password);
     }
 }
