@@ -6,14 +6,10 @@ import br.com.backend.dto.request.EnrollmentRequest;
 import br.com.backend.dto.request.SchoolYearRequest;
 import br.com.backend.dto.request.StudentCreateRequest;
 import br.com.backend.entity.enums.EnrollmentStatus;
-import br.com.backend.helper.IntegrationTestHelper;
-import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.UUID;
 

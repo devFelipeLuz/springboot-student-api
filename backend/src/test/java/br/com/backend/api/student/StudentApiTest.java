@@ -1,13 +1,11 @@
-package br.com.backend.api;
+package br.com.backend.api.student;
 
 import br.com.backend.builders.dto.StudentCreateRequestBuilder;
 import br.com.backend.builders.dto.StudentUpdateRequestBuilder;
 import br.com.backend.config.BaseApiTest;
 import br.com.backend.dto.request.StudentCreateRequest;
 import br.com.backend.dto.request.StudentUpdateRequest;
-import br.com.backend.helper.AuthHelper;
-import br.com.backend.helper.StudentData;
-import br.com.backend.helper.StudentHelper;
+import br.com.backend.api.authentication.AuthHelper;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class StudentApiTest extends BaseApiTest {
 
@@ -120,12 +117,16 @@ public class StudentApiTest extends BaseApiTest {
 
     @Test
     void shouldAllowProfessorToListStudents() {
+        StudentData student = helper.createStudent();
+
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
         .when()
                 .get("/students")
         .then()
-                .statusCode(200);
+                .statusCode(200)
+                .body("content", not(empty()))
+                .body("content.name", hasItem(student.getName()));
     }
 
     @Test
@@ -141,14 +142,11 @@ public class StudentApiTest extends BaseApiTest {
     @Test
     void shouldAllowAdminToUpdateStudent() {
         StudentData student = helper.createStudent();
-        String name = "Aluno " + UUID.randomUUID();
-        String email = "email." + UUID.randomUUID() + "@school.com";
-        String password = "password";
 
         StudentUpdateRequest request = StudentUpdateRequestBuilder.builder()
-                .withName(name)
-                .withEmail(email)
-                .withPassword(password)
+                .withName("Aluno " + UUID.randomUUID())
+                .withEmail("email." + UUID.randomUUID() + "@school.com")
+                .withPassword("password")
                 .build();
 
         given()
@@ -159,21 +157,18 @@ public class StudentApiTest extends BaseApiTest {
                 .patch("/students/{id}", student.getId())
         .then()
                 .statusCode(200)
-                .body("name", equalTo(name))
-                .body("email", equalTo(email));
+                .body("name", equalTo(request.name()))
+                .body("email", equalTo(request.email()));
     }
 
     @Test
     void shouldAllowStudentToUpdateOwnData() {
         StudentData student = helper.createStudent();
-        String name = "Aluno " + UUID.randomUUID();
-        String email = "email." + UUID.randomUUID() + "@school.com";
-        String password = "password";
 
         StudentUpdateRequest request = StudentUpdateRequestBuilder.builder()
-                .withName(name)
-                .withEmail(email)
-                .withPassword(password)
+                .withName("Aluno " + UUID.randomUUID())
+                .withEmail("email." + UUID.randomUUID() + "@school.com")
+                .withPassword("password")
                 .build();
 
         given()
@@ -185,8 +180,8 @@ public class StudentApiTest extends BaseApiTest {
                 .patch("/students/{id}", student.getId())
         .then()
                 .statusCode(200)
-                .body("name", equalTo(name))
-                .body("email", equalTo(email));
+                .body("name", equalTo(request.name()))
+                .body("email", equalTo(request.email()));
     }
 
     @Test
@@ -194,14 +189,10 @@ public class StudentApiTest extends BaseApiTest {
         StudentData student = helper.createStudent();
         StudentData anotherStudent = helper.createStudent();
 
-        String name = "Aluno " + UUID.randomUUID();
-        String email = "email." + UUID.randomUUID() + "@school.com";
-        String password = "password";
-
         StudentUpdateRequest request = StudentUpdateRequestBuilder.builder()
-                .withName(name)
-                .withEmail(email)
-                .withPassword(password)
+                .withName("Aluno " + UUID.randomUUID())
+                .withEmail("email." + UUID.randomUUID() + "@school.com")
+                .withPassword("password")
                 .build();
 
         given()

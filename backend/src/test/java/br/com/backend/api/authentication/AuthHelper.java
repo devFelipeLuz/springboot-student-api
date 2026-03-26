@@ -1,4 +1,4 @@
-package br.com.backend.helper;
+package br.com.backend.api.authentication;
 
 import br.com.backend.builders.dto.AuthRequestBuilder;
 import br.com.backend.dto.request.AuthRequest;

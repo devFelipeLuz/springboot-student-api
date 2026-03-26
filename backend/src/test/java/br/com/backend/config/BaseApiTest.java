@@ -1,8 +1,14 @@
 package br.com.backend.config;
 
-import br.com.backend.helper.AuthHelper;
-import br.com.backend.helper.EnrollmentHelper;
-import br.com.backend.helper.StudentHelper;
+import br.com.backend.api.assessment.AssessmentHelper;
+import br.com.backend.api.assignment.AssignmentHelper;
+import br.com.backend.api.authentication.AuthHelper;
+import br.com.backend.api.classroom.ClassroomHelper;
+import br.com.backend.api.enrollment.EnrollmentHelper;
+import br.com.backend.api.professor.ProfessorHelper;
+import br.com.backend.api.schoolyear.SchoolYearHelper;
+import br.com.backend.api.student.StudentHelper;
+import br.com.backend.api.subject.SubjectHelper;
 import br.com.backend.integration.AbstractIntegrationTest;
 import io.restassured.RestAssured;
 import io.restassured.config.EncoderConfig;
@@ -15,7 +21,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
-@Import({DataInitializer.class, AuthHelper.class, StudentHelper.class, EnrollmentHelper.class})
+@Import({DataInitializer.class,
+        AuthHelper.class,
+        StudentHelper.class,
+        EnrollmentHelper.class,
+        AssignmentHelper.class,
+        AssessmentHelper.class,
+        ClassroomHelper.class,
+        ProfessorHelper.class,
+        SchoolYearHelper.class,
+        SubjectHelper.class})
 public abstract class BaseApiTest extends AbstractIntegrationTest {
 
     @LocalServerPort

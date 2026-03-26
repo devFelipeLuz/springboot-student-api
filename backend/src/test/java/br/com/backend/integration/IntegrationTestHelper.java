@@ -1,4 +1,4 @@
-package br.com.backend.helper;
+package br.com.backend.integration;
 
 import com.jayway.jsonpath.JsonPath;
 import org.springframework.beans.factory.annotation.Autowired;

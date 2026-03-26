@@ -1,6 +1,5 @@
 package br.com.backend.integration;
 
-import br.com.backend.helper.IntegrationTestHelper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
@@ -29,6 +28,10 @@ public abstract class AbstractIntegrationTest {
                     .withUsername("test")
                     .withPassword("test");
 
+    static {
+        postgres.start();
+    }
+
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
 
@@ -36,6 +39,6 @@ public abstract class AbstractIntegrationTest {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
 
-        registry.add("spring.jpa.hibernate.dll-auto", ()-> "create-drop");
+        registry.add("spring.jpa.hibernate.ddl-auto", ()-> "create-drop");
     }
 }

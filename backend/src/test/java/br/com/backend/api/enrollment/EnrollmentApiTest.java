@@ -1,17 +1,23 @@
-package br.com.backend.api;
+package br.com.backend.api.enrollment;
 
+import br.com.backend.api.authentication.AuthHelper;
+import br.com.backend.api.classroom.ClassroomData;
+import br.com.backend.api.classroom.ClassroomHelper;
+import br.com.backend.api.schoolyear.SchoolYearData;
+import br.com.backend.api.schoolyear.SchoolYearHelper;
+import br.com.backend.api.student.StudentData;
+import br.com.backend.api.student.StudentHelper;
 import br.com.backend.builders.dto.EnrollmentRequestBuilder;
 import br.com.backend.config.BaseApiTest;
 import br.com.backend.dto.request.EnrollmentRequest;
 import br.com.backend.entity.enums.EnrollmentStatus;
-import br.com.backend.helper.*;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 public class EnrollmentApiTest extends BaseApiTest {
 
@@ -19,14 +25,30 @@ public class EnrollmentApiTest extends BaseApiTest {
     private AuthHelper auth;
 
     @Autowired
+    private StudentHelper studentHelper;
+
+    @Autowired
+    private SchoolYearHelper schoolYearHelper;
+
+    @Autowired
+    private ClassroomHelper classroomHelper;
+
+    @Autowired
     private EnrollmentHelper helper;
+
+    private StudentData student;
+    private SchoolYearData schoolYear;
+    private ClassroomData classroom;
+
+    @BeforeEach
+    public void setup() {
+        student = studentHelper.createStudent();
+        schoolYear = schoolYearHelper.createSchoolYear();
+        classroom = classroomHelper.createClassroom(schoolYear.getId());
+    }
 
     @Test
     void shouldAllowAdminToCreateEnrollment() {
-        StudentData student = helper.createStudent();
-        SchoolYearData schoolYear = helper.createSchoolYear();
-        ClassroomData classroom = helper.createClassroom(schoolYear.getId());
-
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(student.getId())
                 .withSchoolYearId(schoolYear.getId())
@@ -50,10 +72,6 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldReturnForbiddenWhenProfessorCreatesEnrollment() {
-        StudentData student = helper.createStudent();
-        SchoolYearData schoolYear = helper.createSchoolYear();
-        ClassroomData classroom = helper.createClassroom(schoolYear.getId());
-
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(student.getId())
                 .withSchoolYearId(schoolYear.getId())
@@ -72,10 +90,6 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldReturnForbiddenWhenStudentCreatesEnrollment() {
-        StudentData student = helper.createStudent();
-        SchoolYearData schoolYear = helper.createSchoolYear();
-        ClassroomData classroom = helper.createClassroom(schoolYear.getId());
-
         EnrollmentRequest request = EnrollmentRequestBuilder.builder()
                 .withStudentId(student.getId())
                 .withSchoolYearId(schoolYear.getId())
@@ -94,7 +108,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldAllowAdminToGetEnrollmentById() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -111,7 +126,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldAllowProfessorToGetEnrollmentById() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
@@ -128,7 +144,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldReturnForbiddenWhenStudentGetsEnrollmentById() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
@@ -140,22 +157,32 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldAllowAdminToListEnrollments() {
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
+
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
         .when()
                 .get("/enrollments")
         .then()
-                .statusCode(200);
+                .statusCode(200)
+                .body("content", not(empty()))
+                .body("content.studentName", hasItem(enrollment.getStudentName()));
     }
 
     @Test
     void shouldAllowProfessorToListEnrollments() {
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
+
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
         .when()
                 .get("/enrollments")
         .then()
-                .statusCode(200);
+                .statusCode(200)
+                .body("content", not(empty()))
+                .body("content.studentName", hasItem(enrollment.getStudentName()));
     }
 
     @Test
@@ -170,7 +197,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldAllowAdminToFinishEnrollment() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -184,7 +212,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldReturnForbiddenWhenProfessorFinishesEnrollment() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
@@ -196,7 +225,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldReturnForbiddenWhenStudentFinishesEnrollment() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
@@ -208,7 +238,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldAllowAdminToCancelEnrollment() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
@@ -222,7 +253,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldReturnForbiddenWhenProfessorCancelsEnrollment() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
@@ -234,7 +266,8 @@ public class EnrollmentApiTest extends BaseApiTest {
 
     @Test
     void shouldReturnForbiddenWhenStudentCancelsEnrollment() {
-        EnrollmentData enrollment = helper.createEnrollment();
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())

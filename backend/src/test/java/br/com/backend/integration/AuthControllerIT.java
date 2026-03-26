@@ -3,7 +3,6 @@ package br.com.backend.integration;
 import br.com.backend.config.DataInitializer;
 import br.com.backend.dto.request.*;
 import br.com.backend.entity.User;
-import br.com.backend.helper.IntegrationTestHelper;
 import br.com.backend.repository.UserRepository;
 import br.com.backend.service.FakeEmailService;
 import com.jayway.jsonpath.JsonPath;

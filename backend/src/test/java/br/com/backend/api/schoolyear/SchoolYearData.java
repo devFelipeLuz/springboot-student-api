@@ -1,4 +1,4 @@
-package br.com.backend.helper;
+package br.com.backend.api.schoolyear;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

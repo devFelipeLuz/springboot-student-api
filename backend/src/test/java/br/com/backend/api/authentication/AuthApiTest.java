@@ -1,4 +1,4 @@
-package br.com.backend.api;
+package br.com.backend.api.authentication;
 
 import br.com.backend.builders.dto.AuthRequestBuilder;
 import br.com.backend.builders.dto.UserCreateRequestBuilder;
@@ -7,7 +7,6 @@ import br.com.backend.dto.request.AuthRequest;
 import br.com.backend.dto.request.RefreshRequest;
 import br.com.backend.dto.request.UserCreateRequest;
 import br.com.backend.entity.enums.Role;
-import br.com.backend.helper.AuthHelper;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,8 @@
-package br.com.backend.helper;
+package br.com.backend.api.student;
 
 import br.com.backend.builders.dto.StudentCreateRequestBuilder;
 import br.com.backend.dto.request.StudentCreateRequest;
+import br.com.backend.api.authentication.AuthHelper;
 import io.restassured.http.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestComponent;
