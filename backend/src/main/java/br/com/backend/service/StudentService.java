@@ -17,6 +17,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -51,8 +53,13 @@ public class StudentService {
     }
 
     public Page<StudentResponseDTO> findAll(String name, String email, Boolean active, Pageable pageable) {
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("name", name);
+        filters.put("email", email);
+        filters.put("active", active);
+
         Specification<Student> spec =
-                GenericSpecification.withFilters(name, email, active);
+                GenericSpecification.withFilters(filters);
 
         return repository.findAll(spec, pageable)
                 .map(StudentMapper::toDTO);

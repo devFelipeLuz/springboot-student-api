@@ -5,42 +5,36 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GenericSpecification {
 
-    public static <T> Specification<T> withFilters(String name, String email, Boolean active) {
+    public static <T> Specification<T> withFilters(Map<String, Object> filters) {
         return (root, query, criteriaBuilder) -> {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            if (name != null && !name.isBlank()) {
-                String[] names = name.toLowerCase().split("\\s+");
+            filters.forEach((field, value) -> {
+                if (value == null) return;
 
-                for (String n : names) {
+                if (value instanceof String str && !str.isBlank()) {
+                    String[] terms = str.toLowerCase().split("\\s+");
+
+                    for (String term : terms) {
+                        predicates.add(
+                                criteriaBuilder.like(
+                                        criteriaBuilder.lower(root.get(field)),
+                                        "%" + term.toLowerCase() + "%"
+                                )
+                        );
+                    }
+
+                } else {
                     predicates.add(
-                            criteriaBuilder.like(
-                                    criteriaBuilder.lower(root.get("name")),
-                                    "%" + n + "%"
-                            )
+                            criteriaBuilder.equal(root.get(field), value)
                     );
                 }
-
-            }
-
-            if (email != null && !email.isBlank()) {
-                predicates.add(
-                        criteriaBuilder.like(
-                                criteriaBuilder.lower(root.get("email")),
-                                "%" + email + "%"
-                        )
-                );
-            }
-
-            if (active != null) {
-                predicates.add(
-                        criteriaBuilder.equal(root.get("active"), active)
-                );
-            }
+            });
 
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         };

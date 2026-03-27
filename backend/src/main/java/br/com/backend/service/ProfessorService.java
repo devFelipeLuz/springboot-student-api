@@ -16,6 +16,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -46,7 +48,12 @@ public class ProfessorService {
     }
 
     public Page<ProfessorResponseDTO> findAll(String name, String email, Boolean active, Pageable pageable) {
-        Specification<Professor> spec = GenericSpecification.withFilters(name, email, active);
+        Map<String, Object> filters = new HashMap<>();
+        filters.put("name", name);
+        filters.put("email", email);
+        filters.put("active", active);
+
+        Specification<Professor> spec = GenericSpecification.withFilters(filters);
 
         return repository.findAll(spec, pageable)
                 .map(ProfessorMapper::toDTO);
