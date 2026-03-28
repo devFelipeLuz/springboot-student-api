@@ -14,21 +14,22 @@ public class AttendanceSessionMapper {
     }
     
     public static AttendanceSessionResponseDTO toDTO(AttendanceSession session) {
-        TeachingAssignment assingment = session.getTeachingAssignment();
+        TeachingAssignment assignment = session.getTeachingAssignment();
 
         List<AttendanceRecordResponseDTO> students = session.getRecords().stream()
                 .map(r -> new AttendanceRecordResponseDTO(
                         r.getId(),
                         r.getEnrollment().getStudent().getName(),
-                        r.getStatus()
+                        r.getStatus().name(),
+                        r.getAttendanceSession().getDate()
                 ))
                 .toList();
 
         return new AttendanceSessionResponseDTO(
                 session.getId(),
-                assingment.getProfessor().getName(),
-                assingment.getSubject().getName(),
-                assingment.getClassroom().getName(),
+                assignment.getProfessor().getName(),
+                assignment.getSubject().getName(),
+                assignment.getClassroom().getName(),
                 session.getDate(),
                 students
         );
