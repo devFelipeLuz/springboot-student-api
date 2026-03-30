@@ -28,7 +28,27 @@ public class StudentHelper {
                 .withPassword(password)
                 .build();
 
-        String id = given()
+        String id = createAndReturnId(request);
+
+        return new StudentData(UUID.fromString(id), name, email, password);
+    }
+
+    public StudentData createStudentWithData(String name, String email) {
+        String password = "student";
+
+        StudentCreateRequest request = StudentCreateRequestBuilder.builder()
+                .withName(name)
+                .withEmail(email)
+                .withPassword(password)
+                .build();
+
+        String id = createAndReturnId(request);
+
+        return new StudentData(UUID.fromString(id), name, email, password);
+    }
+
+    private String createAndReturnId(StudentCreateRequest request) {
+        return given()
                 .header("Authorization", "Bearer " + auth.getAdminAccessToken())
                 .contentType(ContentType.JSON)
                 .body(request)
@@ -38,7 +58,5 @@ public class StudentHelper {
                 .statusCode(201)
                 .extract()
                 .path("id");
-
-        return new StudentData(UUID.fromString(id), name, email, password);
     }
 }

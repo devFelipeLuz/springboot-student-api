@@ -140,6 +140,96 @@ public class StudentApiTest extends BaseApiTest {
     }
 
     @Test
+    void shouldFilterStudentsByName() {
+        StudentData student =
+                helper.createStudentWithData("Manolo Rei", "manolo.rei@school.com");
+        StudentData anotherStudent =
+                helper.createStudentWithData("Luiza Betania", "luiza.betania@school.com");
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("name", "Manolo")
+        .when()
+                .get("/students")
+        .then()
+                .statusCode(200)
+                .body("content.name", hasItem(student.getName()))
+                .body("content.name", not(hasItem(anotherStudent.getName())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
+    void shouldFilterStudentsByEmail() {
+        StudentData student =
+                helper.createStudentWithData("Ricardo Juarez", "ricardo.juarez@school.com");
+        StudentData anotherStudent =
+                helper.createStudentWithData("Maria Silva", "maria.silva@school.com");
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("email", "ricardo.j")
+        .when()
+                .get("/students")
+        .then()
+                .statusCode(200)
+                .body("content.email", hasItem(student.getEmail()))
+                .body("content.email", not(hasItem(anotherStudent.getEmail())))
+                .body("content.size()", equalTo(1));
+    }
+
+    @Test
+    void shouldFilterStudentsByActiveStatus() {
+        StudentData student = helper.createStudent();
+        StudentData anotherStudent = helper.createStudent();
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+        .when()
+                .delete("/students/{id}/deactivate", anotherStudent.getId())
+        .then()
+                .statusCode(204);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("active", true)
+        .when()
+                .get("/students")
+        .then()
+                .statusCode(200)
+                .body("content.name", hasItem(student.getName()))
+                .body("content.name", not(hasItem(anotherStudent.getName())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
+    void shouldFilterStudentsByNameAndEmailAndActiveStatus() {
+        StudentData student =
+                helper.createStudentWithData("Gilberto Barolli", "gilberto.barolli@school.com");
+        StudentData anotherStudent =
+                helper.createStudentWithData("Joana Dark", "joana.dark@school.com");
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+        .when()
+                .delete("/students/{id}/deactivate", anotherStudent.getId())
+        .then()
+                .statusCode(204);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("name", "Gilberto")
+                .queryParam("email", "gilberto.b")
+                .queryParam("active", true)
+        .when()
+                .get("/students")
+        .then()
+                .statusCode(200)
+                .body("content.name", hasItem(student.getName()))
+                .body("content.name", not(hasItem(anotherStudent.getName())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
     void shouldAllowAdminToUpdateStudent() {
         StudentData student = helper.createStudent();
 
