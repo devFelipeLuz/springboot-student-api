@@ -7,8 +7,10 @@ import br.com.backend.entity.enums.EnrollmentStatus;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.EnrollmentMapper;
 import br.com.backend.repository.*;
+import br.com.backend.specification.EnrollmentSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,13 +56,11 @@ public class EnrollmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Enrollment not found"));
     }
 
-    public Page<EnrollmentResponseDTO> findAll(EnrollmentStatus status, Pageable pageable) {
-        if (status == null) {
-            return repository.findAll(pageable)
-                    .map(EnrollmentMapper::toDTO);
-        }
+    public Page<EnrollmentResponseDTO> findAll(String studentName, EnrollmentStatus status, Pageable pageable) {
+        Specification<Enrollment> spec =
+                EnrollmentSpecification.withFilters(studentName, status);
 
-        return repository.findByStatus(status, pageable)
+        return repository.findAll(spec, pageable)
                 .map(EnrollmentMapper::toDTO);
     }
 

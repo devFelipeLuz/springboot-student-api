@@ -1,8 +1,10 @@
 package br.com.backend.specification;
 
 import br.com.backend.entity.AttendanceRecord;
+import br.com.backend.entity.Enrollment;
+import br.com.backend.entity.Student;
+import br.com.backend.entity.User;
 import br.com.backend.entity.enums.AttendanceStatus;
-import jakarta.persistence.criteria.Fetch;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -20,24 +22,33 @@ public class AttendanceRecordSpecification {
 
             if (AttendanceRecord.class.equals(query.getResultType())) {
                 root.fetch("session", JoinType.LEFT);
+                root.fetch("enrollment",  JoinType.LEFT)
+                        .fetch("student", JoinType.LEFT)
+                        .fetch("user", JoinType.LEFT);
 
-                Fetch<?, ?> enrollmentFetch = root.fetch("enrollment", JoinType.LEFT);
-                Fetch<?, ?> studentFetch = enrollmentFetch.fetch("student", JoinType.LEFT);
-                studentFetch.fetch("user", JoinType.LEFT);
+                query.distinct(true);
             }
+
+            Join<AttendanceRecord, Enrollment> enrollment =
+                    root.join("enrollment", JoinType.LEFT);
+
+            Join<Enrollment, Student> student =
+                    enrollment.join("student", JoinType.LEFT);
+
+            Join<Student, User> user =
+                    student.join("user", JoinType.LEFT);
+
 
             List<Predicate> predicates = new ArrayList<>();
 
-            Join<?, ?> enrollment = root.join("enrollment", JoinType.LEFT);
-            Join<?, ?> student = enrollment.join("student", JoinType.LEFT);
-            Join<?, ?> user = student.join("user", JoinType.LEFT);
-
             if (studentName != null && !studentName.isBlank()) {
-                for (String term : studentName.toLowerCase().split("\\s+")) {
+                String[] terms = studentName.toLowerCase().split("\\s+");
+
+                for (String term : terms) {
                     predicates.add(
                             criteriaBuilder.like(
                                     criteriaBuilder.lower(student.get("name")),
-                                    "%" + term.toLowerCase() + "%"
+                                    "%" + term + "%"
                             )
                     );
                 }

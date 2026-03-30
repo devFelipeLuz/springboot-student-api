@@ -48,13 +48,17 @@ public class EnrollmentController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<EnrollmentResponseDTO> getEnrollments(
+            @Parameter(description = "Filter by partial or full studentName")
+            @RequestParam(required = false)
+            String studentName,
+
             @Parameter(description = "Filter by enrollment status (ACTIVE, CANCELED or FINISHED)")
             @RequestParam(required = false)
             EnrollmentStatus status,
 
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
-        return service.findAll(status, pageable);
+        return service.findAll(studentName, status, pageable);
     }
 
     @Operation(summary = "Finish enrollment")
