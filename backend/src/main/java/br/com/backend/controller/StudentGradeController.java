@@ -1,5 +1,6 @@
 package br.com.backend.controller;
 
+import br.com.backend.dto.request.StudentGradeFilter;
 import br.com.backend.dto.request.StudentGradeUpdateRequest;
 import br.com.backend.dto.request.StudentGradeCreateRequest;
 import br.com.backend.dto.response.StudentGradeResponseDTO;
@@ -56,9 +57,13 @@ public class StudentGradeController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<StudentGradeResponseDTO> getGrades(
+            @RequestParam(required = false)
+            StudentGradeFilter filter,
+
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.ASC)
             Pageable pageable) {
-        return service.findAll(pageable);
+
+        return service.findAll(filter, pageable);
     }
 
     @Operation(summary = "Update grade")

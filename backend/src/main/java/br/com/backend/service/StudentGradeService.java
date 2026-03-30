@@ -1,6 +1,7 @@
 package br.com.backend.service;
 
 import br.com.backend.dto.request.StudentGradeCreateRequest;
+import br.com.backend.dto.request.StudentGradeFilter;
 import br.com.backend.dto.response.StudentGradeResponseDTO;
 import br.com.backend.dto.request.StudentGradeUpdateRequest;
 import br.com.backend.entity.Assessment;
@@ -10,8 +11,10 @@ import br.com.backend.exception.BusinessException;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.StudentGradeMapper;
 import br.com.backend.repository.StudentGradeRepository;
+import br.com.backend.specification.StudentGradeSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,8 +52,11 @@ public class StudentGradeService {
         return StudentGradeMapper.toDTO(saved);
     }
 
-    public Page<StudentGradeResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
+    public Page<StudentGradeResponseDTO> findAll(StudentGradeFilter filter, Pageable pageable) {
+        Specification<StudentGrade> spec =
+                StudentGradeSpecification.withFilters(filter);
+
+        return repository.findAll(spec, pageable)
                 .map(StudentGradeMapper::toDTO);
     }
 
