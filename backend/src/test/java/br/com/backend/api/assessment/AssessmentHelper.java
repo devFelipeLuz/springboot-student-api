@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.TestComponent;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.request;
 
 @TestComponent
 public class AssessmentHelper {

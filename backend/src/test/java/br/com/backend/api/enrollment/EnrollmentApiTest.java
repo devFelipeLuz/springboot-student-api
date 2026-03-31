@@ -186,6 +186,93 @@ public class EnrollmentApiTest extends BaseApiTest {
     }
 
     @Test
+    void shouldFilterEnrollmentsByStudentName() {
+        StudentData student = studentHelper.createStudentWithData(
+                "Guilherme Briggs", "guilherme.briggs@school.com");
+        StudentData anotherStudent = studentHelper.createStudentWithData(
+                "Manolo Rei", "manolo.rei@school.com");
+
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
+        EnrollmentData anotherEnrollment =
+                helper.createEnrollment(anotherStudent, schoolYear, classroom);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("studentName", "Guilherme")
+        .when()
+                .get("/enrollments")
+        .then()
+                .statusCode(200)
+                .body("content.studentName", hasItem(enrollment.getStudentName()))
+                .body("content.studentName", not(hasItem(anotherEnrollment.getStudentName())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
+    void shouldFilterEnrollmentsByStatus() {
+        StudentData student = studentHelper.createStudentWithData(
+                "Wendel Bezerra", "wendel.bezerra@school.com");
+        StudentData anotherStudent = studentHelper.createStudentWithData(
+                "Renato Russo", "renato.russo@school.com");
+
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
+        EnrollmentData anotherEnrollment =
+                helper.createEnrollment(anotherStudent, schoolYear, classroom);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+        .when()
+                .patch("/enrollments/{id}/cancel", anotherEnrollment.getId())
+        .then()
+                .statusCode(200);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("status", EnrollmentStatus.ACTIVE.name())
+        .when()
+                .get("/enrollments")
+        .then()
+                .statusCode(200)
+                .body("content.studentName", hasItem(enrollment.getStudentName()))
+                .body("content.studentName", not(hasItem(anotherEnrollment.getStudentName())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
+    void shouldFilterEnrollmentsByStudentNameAndStatus() {
+        StudentData student = studentHelper.createStudentWithData(
+                "Gilberto Barolli", "gilberto.barolli@school.com");
+        StudentData anotherStudent = studentHelper.createStudentWithData(
+                "Raphael Rossatto", "raphael.rossatto@school.com");
+
+        EnrollmentData enrollment =
+                helper.createEnrollment(student, schoolYear, classroom);
+        EnrollmentData anotherEnrollment =
+                helper.createEnrollment(anotherStudent, schoolYear, classroom);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+        .when()
+                .patch("/enrollments/{id}/cancel", anotherEnrollment.getId())
+        .then()
+                .statusCode(200);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("studentName", "Gilberto")
+                .queryParam("status", EnrollmentStatus.ACTIVE.name())
+        .when()
+                .get("/enrollments")
+        .then()
+                .statusCode(200)
+                .body("content.studentName", hasItem(enrollment.getStudentName()))
+                .body("content.studentName", not(hasItem(anotherEnrollment.getStudentName())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
     void shouldReturnForbiddenWhenStudentListsEnrollments() {
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
@@ -258,9 +345,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getProfessorAccessToken())
-                .when()
+        .when()
                 .patch("/enrollments/{id}/cancel", enrollment.getId())
-                .then()
+        .then()
                 .statusCode(403);
     }
 
@@ -271,9 +358,9 @@ public class EnrollmentApiTest extends BaseApiTest {
 
         given()
                 .header("Authorization", "Bearer " + auth.getStudentAccessToken())
-                .when()
+        .when()
                 .patch("/enrollments/{id}/cancel", enrollment.getId())
-                .then()
+        .then()
                 .statusCode(403);
     }
 }

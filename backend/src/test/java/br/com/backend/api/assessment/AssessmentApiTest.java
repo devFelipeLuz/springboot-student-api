@@ -208,7 +208,7 @@ public class AssessmentApiTest extends BaseApiTest {
     void shouldFilterAssessmentsByType() {
         AssessmentData assessment =
                 helper.createAssessmentWithData(
-                        assignment.getId(), "Trabalho sobre a Revolução Francesa", AssessmentType.TRABALHO);
+                        assignment.getId(), "Trabalho: Solos Impermeaveis", AssessmentType.TRABALHO);
 
         AssessmentData anotherAssessment =
                 helper.createAssessmentWithData(
@@ -223,6 +223,31 @@ public class AssessmentApiTest extends BaseApiTest {
                 .statusCode(200)
                 .body("content.title", hasItem(assessment.getTitle()))
                 .body("content.title", not(hasItem(anotherAssessment.getTitle())))
+                .body("content.size()", greaterThanOrEqualTo(1));
+    }
+
+    @Test
+    void shouldFilterAssessmentsByTitleAndType() {
+        AssessmentData assessment =
+                helper.createAssessmentWithData(
+                        assignment.getId(), "Trabalho: Megalópoles", AssessmentType.TRABALHO);
+
+        AssessmentData anotherAssessment =
+                helper.createAssessmentWithData(
+                        assignment.getId(), "Prova de Matemática", AssessmentType.PROVA);
+
+        given()
+                .header("Authorization", "Bearer " + auth.getAdminAccessToken())
+                .queryParam("title", "Trabalho")
+                .queryParam("type", AssessmentType.TRABALHO.name())
+        .when()
+                .get("/assessments")
+        .then()
+                .statusCode(200)
+                .body("content.title", hasItem(assessment.getTitle()))
+                .body("content.type", hasItem(assessment.getType()))
+                .body("content.title", not(hasItem(anotherAssessment.getTitle())))
+                .body("content.type", not(hasItem(anotherAssessment.getType())))
                 .body("content.size()", greaterThanOrEqualTo(1));
     }
 
