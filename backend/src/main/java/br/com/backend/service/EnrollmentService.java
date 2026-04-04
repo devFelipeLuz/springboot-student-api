@@ -41,8 +41,6 @@ public class EnrollmentService {
         SchoolYear schoolYear = schoolYearService.findActiveSchoolYear(dto.schoolYearId());
         Classroom classroom = classroomService.findActiveClassroomById(dto.classroomId());
 
-        classroom.ensureCapacity();
-        student.ensureCanEnroll();
 
         Enrollment enrollment = new Enrollment(student, schoolYear, classroom);
         enrollment.register();

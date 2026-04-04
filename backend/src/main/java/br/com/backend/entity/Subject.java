@@ -33,17 +33,18 @@ public class Subject {
             throw new BusinessException("Subject name cannot be null or blank");
         }
 
-        return name;
-    }
-
-    public void updateName(String name) {
-        this.name = validateName(name);
+        return name.trim();
     }
 
     public void ensureActive() {
         if (!this.active) {
             throw new BusinessException("Subject is not active");
         }
+    }
+
+    public void updateName(String name) {
+        ensureActive();
+        this.name = validateName(name);
     }
 
     public void deactivate() {

@@ -54,12 +54,6 @@ public class AttendanceRecord {
             throw new BusinessException("Status cannot be null");
         }
 
-        if (!status.equals(AttendanceStatus.PRESENT) &&
-            !status.equals(AttendanceStatus.ABSENT) &&
-            !status.equals(AttendanceStatus.JUSTIFIED_ABSENCE)) {
-
-            throw new BusinessException("Status must be present, absent or justified_absent");
-        }
         return status;
     }
 }

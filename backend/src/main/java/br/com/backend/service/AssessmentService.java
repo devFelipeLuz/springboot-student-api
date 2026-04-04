@@ -43,6 +43,7 @@ public class AssessmentService {
         Assessment assessment = new Assessment(assignment, dto.title(), dto.type());
 
         Assessment saved = repository.save(assessment);
+
         return AssessmentMapper.toDTO(saved);
     }
 
@@ -64,13 +65,13 @@ public class AssessmentService {
     }
 
     public AssessmentResponseDTO update(UUID id, AssessmentUpdateRequest dto) {
-        Assessment assessment = findAssessmentById(id);
+        Assessment assessment = findActiveAssessmentById(id);
 
-        if (dto.title() != null) {
+        if (ensureStringIsNotNull(dto.title())) {
             assessment.updateTitle(dto.title());
         }
 
-        if (dto.type() != null) {
+        if (ensureAssessmentTypeIsNotNull(dto.type())) {
             assessment.updateType(dto.type());
         }
 
@@ -78,12 +79,23 @@ public class AssessmentService {
     }
 
     public void delete(UUID id) {
-        Assessment assessment = findAssessmentById(id);
-        repository.delete(assessment);
+        Assessment assessment = findActiveAssessmentById(id);
+        assessment.deactivate();
     }
 
-    public Assessment findAssessmentById(UUID assessmentId) {
-        return repository.findById(assessmentId)
+    public Assessment findActiveAssessmentById(UUID assessmentId) {
+        Assessment assessment = repository.findById(assessmentId)
                 .orElseThrow(() -> new EntityNotFoundException("Assessment not found"));
+
+        assessment.ensureActive();
+        return assessment;
+    }
+
+    private boolean ensureStringIsNotNull(String value) {
+        return value != null;
+    }
+
+    private boolean ensureAssessmentTypeIsNotNull(AssessmentType type) {
+        return type != null;
     }
 }

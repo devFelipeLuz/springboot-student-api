@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "assessments")
+@Table(name = "assessment")
 public class Assessment {
 
     @Id
@@ -33,27 +33,56 @@ public class Assessment {
     @Column(nullable = false, updatable = false)
     private Instant assessmentDate;
 
+    @Column(nullable = false)
+    private boolean active;
+
     public Assessment(TeachingAssignment teachingAssignment, String title, AssessmentType type) {
         this.title = validateTitle(title);
         this.type = validateType(type);
         this.teachingAssignment = Objects.requireNonNull(
                 teachingAssignment, "Teaching Assignment cannot be null");
         this.assessmentDate = Instant.now();
+        this.active = true;
     }
 
     public void updateTitle(String title) {
+        ensureActive();
         this.title = validateTitle(title);
     }
 
     public void updateType(AssessmentType type) {
+        ensureActive();
         this.type = validateType(type);
     }
 
+    public void ensureActive() {
+        if (!this.active) {
+            throw new BusinessException("Assessment is not active");
+        }
+    }
+
+    public void deactivate() {
+        ensureActive();
+        this.active = false;
+    }
+
     private String validateTitle(String title) {
-        if (title == null || title.isBlank()) {
+        throwsBusinessExceptionWithInvalidString(title);
+        return title;
+    }
+
+    private boolean ensureStringIsNotNull(String string) {
+        return string != null;
+    }
+
+    private boolean ensureStringIsNotEmpty(String string) {
+        return !string.isBlank();
+    }
+
+    private void throwsBusinessExceptionWithInvalidString(String string) {
+        if (!ensureStringIsNotNull(string) && !ensureStringIsNotEmpty(string)) {
             throw new BusinessException("Name cannot be null or blank");
         }
-        return title;
     }
 
     private AssessmentType validateType(AssessmentType type) {
@@ -61,11 +90,6 @@ public class Assessment {
             throw new BusinessException("Type cannot be null");
         }
 
-        if (!type.equals(AssessmentType.TRABALHO) &&
-            !type.equals(AssessmentType.PROVA) &&
-            !type.equals(AssessmentType.LIÇÃO)) {
-            throw new BusinessException("Type must be TRABALHO, PROVA or LIÇÃO");
-        }
         return type;
     }
 }

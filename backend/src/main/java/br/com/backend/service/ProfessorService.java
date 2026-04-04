@@ -9,7 +9,6 @@ import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.ProfessorMapper;
 import br.com.backend.repository.ProfessorRepository;
-import br.com.backend.specification.GenericSpecification;
 import br.com.backend.specification.ProfessorSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +16,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -59,15 +56,15 @@ public class ProfessorService {
     public ProfessorResponseDTO update(UUID id, ProfessorUpdateRequest dto) {
         Professor professor = findActiveProfessorById(id);
 
-        if (dto.name() != null) {
+        if (ensureStringIsNotNull(dto.name())) {
             professor.updateName(dto.name());
         }
 
-        if (dto.email() != null) {
+        if (ensureStringIsNotNull(dto.email())) {
             userService.changeEmail(professor.getUser().getId(), dto.email());
         }
 
-        if (dto.password() != null) {
+        if (ensureStringIsNotNull(dto.password())) {
             userService.changePassword(professor.getUser().getId(), dto.password());
         }
 
@@ -79,10 +76,14 @@ public class ProfessorService {
         professor.deactivate();
     }
 
-    protected Professor findActiveProfessorById(UUID professorId) {
+    public Professor findActiveProfessorById(UUID professorId) {
         Professor professor = repository.findById(professorId)
                 .orElseThrow(() -> new EntityNotFoundException("Professor not found"));
         professor.ensureActive();
         return professor;
+    }
+
+    public boolean ensureStringIsNotNull(String string) {
+        return string != null;
     }
 }

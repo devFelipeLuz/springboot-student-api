@@ -29,11 +29,12 @@ public class GenericSpecification {
                         );
                     }
 
-                } else {
-                    predicates.add(
-                            criteriaBuilder.equal(root.get(field), value)
-                    );
                 }
+
+                predicates.add(
+                        criteriaBuilder.equal(root.get(field), value)
+                );
+
             });
 
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));

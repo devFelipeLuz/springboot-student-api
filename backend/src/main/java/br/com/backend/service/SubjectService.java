@@ -29,7 +29,7 @@ public class SubjectService {
     }
 
     public SubjectResponseDTO register(SubjectRequest dto) {
-        if (repository.existsByName(dto.name())) {
+        if (repository.existsByNameIgnoreCase(dto.name())) {
             throw new BusinessException("Subject already exists");
         }
 
@@ -57,6 +57,10 @@ public class SubjectService {
     }
 
     public SubjectResponseDTO updateName(UUID id, SubjectRequest dto) {
+        if (repository.existsByNameIgnoreCase(dto.name())) {
+            throw new BusinessException("Subject already exists");
+        }
+
         Subject subject = findActiveSubjectById(id);
         subject.updateName(dto.name());
         return SubjectMapper.toDTO(subject);
@@ -67,7 +71,7 @@ public class SubjectService {
         subject.deactivate();
     }
 
-    protected Subject findActiveSubjectById(UUID id) {
+    public Subject findActiveSubjectById(UUID id) {
         Subject subject = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Subject not found"));
         subject.ensureActive();

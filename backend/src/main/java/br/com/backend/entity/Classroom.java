@@ -1,5 +1,6 @@
 package br.com.backend.entity;
 
+import br.com.backend.entity.enums.EnrollmentStatus;
 import br.com.backend.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -20,20 +21,20 @@ public class Classroom {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Column(name = "classroom_capacity")
+    @Column(name = "max_capacity", nullable = false)
     private int maxCapacity;
 
     @ManyToOne
     @JoinColumn(name = "school_year_id")
     private SchoolYear schoolYear;
 
-    @Column(name = "active_enrollments")
-    private int activeEnrollmentsCount;
+    @Column(name = "active_enrollments", nullable = false)
+    private int enrollmentCountForSchoolYear;
 
     @OneToMany(mappedBy = "classroom", fetch = FetchType.LAZY)
-    private List<Enrollment> enrollments;
+    private List<Enrollment> enrollments =  new ArrayList<>();
 
-    @Column(name = "active")
+    @Column(name = "active", nullable = false)
     private boolean active;
 
     public Classroom(String name, SchoolYear schoolYear) {
@@ -41,19 +42,20 @@ public class Classroom {
         this.name = validateName(name);
         this.maxCapacity = 25;
         this.schoolYear = Objects.requireNonNull(schoolYear, "School year cannot be null");
-        this.activeEnrollmentsCount = 0;
-        this.enrollments = new ArrayList<>();
+        this.enrollmentCountForSchoolYear = 0;
         this.active = true;
     }
 
     public void ensureCapacity() {
-        if (activeEnrollmentsCount >= maxCapacity) {
+        if (enrollmentCountForSchoolYear >= maxCapacity) {
             throw new BusinessException("Classroom is full");
         }
     }
 
     public void changeCapacity(int newCapacity) {
-        if (newCapacity < activeEnrollmentsCount) {
+        ensureActive();
+
+        if (newCapacity < enrollmentCountForSchoolYear) {
             throw new BusinessException("The new capacity cannot be less than active enrollments");
         }
 
@@ -61,36 +63,36 @@ public class Classroom {
     }
 
     public void addEnrollment(Enrollment enrollment) {
+        ensureActive();
+
         if (enrollment == null) {
             throw new BusinessException("Enrollment cannot be null");
         }
 
         this.enrollments.add(enrollment);
-        increaseActiveEnrollmentsCount();
+
+        if (enrollment.getStatus() == EnrollmentStatus.ACTIVE) {
+            increaseActiveEnrollmentsCount();
+        }
     }
 
     public void increaseActiveEnrollmentsCount() {
-        if (activeEnrollmentsCount >= maxCapacity) {
-            throw new BusinessException("Turma lotada");
-        }
-
-        this.activeEnrollmentsCount++;
+        ensureCapacity();
+        this.enrollmentCountForSchoolYear++;
     }
 
     public void decreaseActiveEnrollmentsCount() {
-        if (activeEnrollmentsCount == 0) {
+        ensureActive();
+
+        if (enrollmentCountForSchoolYear == 0) {
             throw new IllegalArgumentException("Turma vazia");
         }
 
-        this.activeEnrollmentsCount--;
+        this.enrollmentCountForSchoolYear--;
     }
 
     public List<Enrollment> getEnrollments() {
         return Collections.unmodifiableList(enrollments);
-    }
-
-    public void deactivate() {
-        this.active = false;
     }
 
     public void ensureActive() {
@@ -99,7 +101,12 @@ public class Classroom {
         }
     }
 
-    public String validateName(String name) {
+    public void deactivate() {
+        ensureActive();
+        this.active = false;
+    }
+
+    private String validateName(String name) {
         if (name == null || name.isBlank()) {
             throw new BusinessException("Name cannot be null or blank");
         }

@@ -44,7 +44,7 @@ public class StudentGradeService {
             throw new BusinessException("Grade already exists for this student and assessment");
         }
 
-        Assessment assessment = assessmentService.findAssessmentById(dto.assessmentId());
+        Assessment assessment = assessmentService.findActiveAssessmentById(dto.assessmentId());
         Enrollment enrollment = enrollmentService.findActiveEnrollmentById(dto.enrollmentId());
 
         StudentGrade grade = new StudentGrade(assessment, enrollment, dto.maxScore());

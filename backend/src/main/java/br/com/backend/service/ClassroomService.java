@@ -26,8 +26,9 @@ public class ClassroomService {
     private final ClassroomRepository repository;
     private final SchoolYearService schoolYearService;
 
-    public ClassroomService(ClassroomRepository repository,
-                            SchoolYearService schoolYearService) {
+    public ClassroomService(
+            ClassroomRepository repository, SchoolYearService schoolYearService) {
+
         this.repository = repository;
         this.schoolYearService = schoolYearService;
     }
@@ -59,7 +60,6 @@ public class ClassroomService {
 
     public ClassroomResponseDTO changeCapacity(UUID id, ClassroomChangeCapacityRequest dto) {
         Classroom classroom = findActiveClassroomById(id);
-        classroom.getSchoolYear().ensureActive();
         classroom.changeCapacity(dto.newCapacity());
         return ClassroomMapper.toDTO(classroom);
     }

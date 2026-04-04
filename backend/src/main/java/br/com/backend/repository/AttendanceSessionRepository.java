@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface AttendanceSessionRepository extends JpaRepository<AttendanceSession, UUID>,
         JpaSpecificationExecutor<AttendanceSession> {
 
-    boolean existsByTeachingAssignmentAndDate(UUID assignmentId, LocalDate date);
+    boolean existsByTeachingAssignment_IdAndDate(UUID assignmentId, LocalDate date);
 }

@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface StudentRepository extends JpaRepository<Student, UUID>, JpaSpecificationExecutor<Student> {
 
+long countByActiveTrue();
 }

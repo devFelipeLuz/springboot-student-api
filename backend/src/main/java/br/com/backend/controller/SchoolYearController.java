@@ -45,13 +45,16 @@ public class SchoolYearController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN', 'PROFESSOR')")
     public Page<SchoolYearResponseDTO> getSchoolYears(
+            @Parameter(description = "Filter by partial or full school year")
+            Integer year,
+
             @Parameter(description = "Filter by status active (true or false)")
             @RequestParam(required = false)
             Boolean active,
 
             @PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC)
             Pageable pageable) {
-        return service.findAll(active, pageable);
+        return service.findAll(year, active, pageable);
     }
 
     @Operation(summary = "Update schoolYear")

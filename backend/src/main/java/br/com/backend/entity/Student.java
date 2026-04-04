@@ -22,7 +22,7 @@ public class Student {
     private String name;
 
     @OneToMany(mappedBy = "student")
-    private List<Enrollment> enrollments;
+    private List<Enrollment> enrollments = new ArrayList<>();
 
     @Column(name = "active", nullable = false)
     private boolean active;
@@ -34,7 +34,6 @@ public class Student {
     public Student(String name, User user) {
         this.name = validateName(name);
         this.user = Objects.requireNonNull(user, "User cannot be null");
-        this.enrollments = new ArrayList<>();
         this.active = true;
     }
 
@@ -44,6 +43,7 @@ public class Student {
     }
 
     public void deactivate() {
+        ensureActive();
         this.active = false;
     }
 

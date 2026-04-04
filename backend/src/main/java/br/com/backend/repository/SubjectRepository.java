@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.UUID;
 
 public interface SubjectRepository extends JpaRepository<Subject, UUID>, JpaSpecificationExecutor<Subject> {
-    boolean existsByName(String name);
+    boolean existsByNameIgnoreCase(String name);
+
+    long countByActiveTrue();
 }

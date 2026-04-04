@@ -9,7 +9,6 @@ import br.com.backend.entity.enums.Role;
 import br.com.backend.exception.EntityNotFoundException;
 import br.com.backend.mapper.StudentMapper;
 import br.com.backend.repository.StudentRepository;
-import br.com.backend.repository.UserRepository;
 import br.com.backend.specification.StudentSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,8 +16,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 
@@ -29,9 +26,8 @@ public class StudentService {
     private final StudentRepository repository;
     private final UserService userService;
 
-    public StudentService(StudentRepository repository,
-                          UserRepository userRepository,
-                          UserService userService) {
+    public StudentService(
+            StudentRepository repository, UserService userService) {
 
         this.repository = repository;
         this.userService = userService;

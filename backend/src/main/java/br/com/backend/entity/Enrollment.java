@@ -15,7 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "enrollment",
 uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"student_id", "classroom_id"})
+        @UniqueConstraint(columnNames = {"student_id", "classroom_id", "school_year_id"})
 })
 public class Enrollment {
 
@@ -40,6 +40,9 @@ public class Enrollment {
     @Column(name = "enrollment_date", nullable = false, updatable = false)
     private Instant enrolledAt;
 
+    @Column(name = "finish_date")
+    private Instant finishedAt;
+
     @Column(name = "cancellation_date")
     private Instant canceledAt;
 
@@ -62,17 +65,17 @@ public class Enrollment {
 
     public boolean isFinished() {
         return this.status == EnrollmentStatus.FINISHED
-                && canceledAt != null;
+                && finishedAt != null;
     }
 
     public void finishEnrollment() {
         ensureAllActive();
         this.status = EnrollmentStatus.FINISHED;
-        this.canceledAt = Instant.now();
+        this.finishedAt = Instant.now();
     }
 
     public void cancelEnrollment() {
-        ensureAllActive();
+        ensureActive();
         this.classroom.decreaseActiveEnrollmentsCount();
         this.status = EnrollmentStatus.CANCELED;
         this.canceledAt = Instant.now();
@@ -110,6 +113,8 @@ public class Enrollment {
     }
 
     public void register() {
+        ensureStudentActive();
+        ensureClassroomActive();
         student.addEnrollment(this);
         classroom.addEnrollment(this);
     }

@@ -22,10 +22,17 @@ public class FakeEmailService implements EmailService {
     }
 
     public String getLastToken() {
-        if (lastToken == null) {
+        shouldThrowExceptionWhenTokenIsNull(lastToken);
+        return lastToken;
+    }
+
+    private boolean verifyTokenIsNull(String token) {
+        return token == null;
+    }
+
+    private void shouldThrowExceptionWhenTokenIsNull(String token) {
+        if (verifyTokenIsNull(token)) {
             throw new BusinessException("Token is null");
         }
-
-        return lastToken;
     }
 }

@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "professors")
+@Table(name = "professor")
 public class Professor {
 
     @Id
@@ -40,6 +40,7 @@ public class Professor {
     }
 
     public void updateName(String name) {
+        ensureActive();
         this.name = validateName(name);
     }
 

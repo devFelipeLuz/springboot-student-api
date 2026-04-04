@@ -101,7 +101,7 @@ public class AssessmentServiceTest {
     void shouldFindAssessmentById() {
         when(repository.findById(assessmentId)).thenReturn(Optional.of(assessment));
 
-        Assessment result = service.findAssessmentById(assessmentId);
+        Assessment result = service.findActiveAssessmentById(assessmentId);
 
         assertEquals(assessment, result);
     }
@@ -110,7 +110,7 @@ public class AssessmentServiceTest {
     void shouldThrowExceptionWhenAssessmentNotFound() {
         when(repository.findById(assessmentId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> service.findAssessmentById(assessmentId));
+        assertThrows(EntityNotFoundException.class, () -> service.findActiveAssessmentById(assessmentId));
     }
 
     @Test
